@@ -10,7 +10,7 @@ namespace FinanceTracker.Models
         public DateTime Date { get; set; }
         public string Name { get; set; }
         public string Category { get; set; }
-        public double Expense { get; set; }
+        public double DollarValue { get; set; }
         public List<string> Tags { get; set; }
     }
 }
