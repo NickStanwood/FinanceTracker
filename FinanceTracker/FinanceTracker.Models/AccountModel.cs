@@ -13,6 +13,6 @@ namespace FinanceTracker.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public double Balance { get; set; }
-        public string CurrencType { get; set; }
+        public string CurrencyType { get; set; }
     }
 }
