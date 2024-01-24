@@ -57,7 +57,6 @@ namespace FinanceTracker.WPF
             foreach(AccountModel account in accounts)
             {
                 Accounts.AccountList.Add(account);
-                await SQLiteContext.AddTransaction(account.Id, DateTime.Now, "test", "category", 100.00);
             }
         }
 
@@ -70,7 +69,6 @@ namespace FinanceTracker.WPF
                 if(am != null)
                 {
                     Accounts.AccountList.Add(am);
-                    await SQLiteContext.AddTransaction(am.Id, DateTime.Now, "new test", "category", 100.00);
                 }
             }
         }

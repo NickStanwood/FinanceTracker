@@ -10,7 +10,11 @@ namespace FinanceTracker.WPF
 {
     public class AccountViewModel : ViewModelBase<AccountModel>
     {
-        public ObservableCollection<TransactionModel> Transactions = new ObservableCollection<TransactionModel>();
+        public double Balance { get { return _m.Balance; } }
+        public string AccountName { get { return _m.Name; } }
+        public string CurrencyType { get { return _m.CurrencyType; } }
+
+        public ObservableCollection<TransactionModel> Transactions { get; set; } = new ObservableCollection<TransactionModel>();
         public AccountViewModel() : base() { }
         public AccountViewModel(AccountModel model) : base(model)
         {
