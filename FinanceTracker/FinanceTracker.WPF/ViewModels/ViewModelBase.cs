@@ -31,7 +31,11 @@ namespace FinanceTracker.WPF
             return _m;
         }
 
-
+        public void SetModel(T newModel)
+        {
+            _m = newModel;
+            Initialize();
+        }
         /// <summary>
         ///  Adds the values from the model to the viewModel and updates the model whenever a value is added to the viewModel 
         /// </summary>

@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using FinanceTracker.Models;
 
 namespace FinanceTracker.WPF
 {
@@ -20,9 +21,28 @@ namespace FinanceTracker.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        FinancesViewModel _viewModel;
         public MainWindow()
         {
             InitializeComponent();
+            _viewModel = DataContext as FinancesViewModel;
+        }
+
+        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            NavigationViewModel? navModel = e.NewValue as NavigationViewModel;
+            if(navModel != null)
+            {
+                _viewModel.NavigationStateChanged(sender, navModel);
+                return;
+            }
+
+            AccountModel? accModel = e.NewValue as AccountModel;
+            if(accModel != null)
+            {
+                _viewModel.NavigationStateChanged(sender, accModel);
+                return;
+            }
         }
     }
 }
