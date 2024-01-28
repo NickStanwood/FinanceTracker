@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using SQLiteNetExtensions.Attributes;
 
 namespace FinanceTracker.Models
 {
@@ -6,10 +7,13 @@ namespace FinanceTracker.Models
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+        [ForeignKey(typeof(AccountModel))]
         public Guid AccountId { get; set; }
         public DateTime Date { get; set; }
         public string Name { get; set; }
-        public string Category { get; set; }
+
+        [ForeignKey(typeof(CategoryModel))]
+        public Guid? CategoryId { get; set; }
         public double DollarValue { get; set; }
     }
 }

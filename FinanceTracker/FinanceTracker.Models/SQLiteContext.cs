@@ -13,6 +13,7 @@ namespace FinanceTracker.Models
         private static SQLiteAsyncConnection _conn = null;
         private static AccountTable _accountTable = new AccountTable();
         private static TransactionTable _transactionTable = new TransactionTable();
+        private static CategoryTable _categoryTable = new CategoryTable();
         private static async Task Initialize()
         {
             if (_conn != null)
@@ -22,6 +23,7 @@ namespace FinanceTracker.Models
             _conn = new SQLiteAsyncConnection(connStr);
             await _conn.CreateTableAsync<AccountModel>();
             await _conn.CreateTableAsync<TransactionModel>();
+            await _conn.CreateTableAsync<CategoryModel>();
         }
 
         #region Account Table
@@ -39,17 +41,30 @@ namespace FinanceTracker.Models
 
 
         #region Transaction Table
-        public async static Task<TransactionModel?> AddTransaction(Guid accId, DateTime date, string name, string category, double dollars)
+        public async static Task<TransactionModel?> AddTransaction(Guid accId, DateTime date, double dollars, string name, Guid? categoryId)
         {
             await Initialize();
-            return await _transactionTable.InsertTransaction(_conn, accId, date, name, category, dollars);
+            return await _transactionTable.InsertTransaction(_conn, accId, date, dollars, name, categoryId);
         }
 
         public async static Task<List<TransactionModel>> GetAllAccountTransactionsAsync(Guid accId)
         {
             await Initialize();
-            return await _transactionTable.SelectTransactions(_conn, accId);
+            return await _transactionTable.SelectAccountTransactions(_conn, accId);
         }
+        public async static Task<List<TransactionModel>> GetAllAccountTransactionsAsync(Guid accId, DateTime since)
+        {
+            await Initialize();
+            return await _transactionTable.SelectTransactions(_conn, accId, since);
+        }
+        #endregion
+
+        #region Category Table
+        public async static Task<List<CategoryModel>> GetAllCategories()
+        {
+            await Initialize();
+            return await _categoryTable.SelectAll(_conn);
+        }        
         #endregion
     }
 }

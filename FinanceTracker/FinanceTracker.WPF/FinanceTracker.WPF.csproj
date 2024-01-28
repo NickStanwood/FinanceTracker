@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FinanceTracker.Core\FinanceTracker.Core.csproj" />
     <ProjectReference Include="..\FinanceTracker.Models\FinanceTracker.Models.csproj" />
   </ItemGroup>
 
