@@ -37,6 +37,11 @@ namespace FinanceTracker.Models
             await Initialize();
             return await _accountTable.InsertAccount(_conn, accName);
         }
+        public async static Task UpdateAccount(AccountModel acc)
+        {
+            await Initialize();
+            await _accountTable.UpdateAccount(_conn, acc);
+        }
         #endregion
 
 

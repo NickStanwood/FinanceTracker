@@ -8,26 +8,38 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Button Content="Add Transactions"/>
-        <ListView Grid.Row="1"  ItemsSource="{Binding Transactions}">            
+        <Button Content="Add Transactions" Margin="10,3,10,3"/>
+        <ListView Grid.Row="1"  ItemsSource="{Binding Transactions}" HorizontalAlignment="Stretch" Margin="10,0,10,0">            
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Path=Date, StringFormat=dd-MMM-yy}" Margin="0,0,10,0"/>
-                        <TextBlock Text="{Binding Path=DollarValue, StringFormat={}${0}}" Margin="0,0,10,0"/>
-                        <TextBlock Text="{Binding Category}" Margin="0,0,10,0"/>
-                        <TextBlock Text="{Binding Name}"/>
+                    <StackPanel Orientation="Horizontal" Margin="5,2,5,2">
+                        <TextBlock Text="{Binding Path=Date, StringFormat=dd-MMM-yyyy}" Margin="0,0,10,0" MinWidth="50"/>
+                        <TextBlock Text="{Binding Path=DollarValue, StringFormat={}$  {0:#,#.00}}" Margin="0,0,10,0" MinWidth="50"/>
+                        <TextBlock Text="{Binding Category}" Margin="0,0,10,0" MinWidth="50"/>
+                        <TextBlock Text="{Binding Name}"  MinWidth="50"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Path=Balance, StringFormat={}${0}}" FontWeight="Bold" FontSize="50"/>
+        <TextBlock Grid.Row="0" Grid.Column="1" 
+                   Text="{Binding AccountName}" 
+                   FontWeight="Bold" FontSize="20" HorizontalAlignment="Stretch" Background="LightGreen" TextAlignment="Center"/>
+        <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch">
+            <TextBlock  Text="{Binding Path=Balance, StringFormat={}$  {0:#,#.00}}" 
+                   FontWeight="Bold" FontSize="50"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" 
+                   Text="{Binding Path=TransactionFrequency, StringFormat={}{0:#,#.00} Transactions per day}" 
+                   FontWeight="Bold" FontSize="20"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" 
+                   Text="{Binding Path=AveragePerchaseCost, StringFormat={}Avg ${0:#,#.00} per transaction}" 
+                   FontWeight="Bold" FontSize="20"/>
+        </StackPanel>        
     </Grid>
 </UserControl>

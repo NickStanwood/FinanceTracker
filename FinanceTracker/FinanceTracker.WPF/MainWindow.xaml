@@ -10,6 +10,11 @@
     <Window.DataContext>
         <local:FinancesViewModel/>
     </Window.DataContext>
+    <Window.Resources>
+        <ResourceDictionary>
+            <local:ViewStateVisibilityConverter x:Key="ViewStateVisibilityConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -55,7 +60,21 @@
             </TreeView.Resources>
         </TreeView>
 
-        <local:AccountUserControl Grid.Row="1" Grid.Column="1"
-            DataContext="{Binding AccountViewModel}"/>
+        <!--<local:AccountUserControl Grid.Row="1" Grid.Column="1" 
+            Visibility="{Binding Path=ViewState, 
+                                 NotifyOnSourceUpdated=True,
+                                 Converter={StaticResource ViewStateVisibilityConverter}, 
+                                 ConverterParameter={x:Static local:MainWindowViewState.Account}}"
+            DataContext="{Binding AccountViewModel}"/>-->
+        <TextBlock Grid.Row="1" Grid.Column="1" 
+            Visibility="{Binding Path=ViewState, 
+                                 Converter={StaticResource ViewStateVisibilityConverter}, 
+                                 ConverterParameter={x:Static local:MainWindowViewState.None}}"
+            Text="No Navigation Menu Selected"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" 
+            Visibility="{Binding Path=ViewState, 
+                                 Converter={StaticResource ViewStateVisibilityConverter}, 
+                                 ConverterParameter={x:Static local:MainWindowViewState.Account}}"
+            Text="Account Selected"/>
     </Grid>
 </Window>

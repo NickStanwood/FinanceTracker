@@ -30,8 +30,9 @@ namespace FinanceTracker.WPF
         private object _accountLock = new object();
         public AccountNavigationViewModel Accounts { get; set; } = new AccountNavigationViewModel { Name= "Accounts"};
         public ObservableCollection<NavigationViewModel> NavigationItems { get; set; } = new ObservableCollection<NavigationViewModel>();
-        
-        MainWindowViewState ViewState = MainWindowViewState.None;
+
+        private MainWindowViewState _viewState = MainWindowViewState.None;
+        public MainWindowViewState ViewState { get { return _viewState; } set { _viewState = value; Notify(); } }
         public AccountViewModel AccountViewModel { get; set; } = new AccountViewModel();
 
         public FinancesViewModel()
@@ -69,6 +70,16 @@ namespace FinanceTracker.WPF
                 if(am != null)
                 {
                     Accounts.AccountList.Add(am);
+
+                    Random rand = new Random();
+                    am.Balance = rand.NextDouble()*10000;
+                    for (int i = 0; i < 100; i++)
+                    {
+                        double transVal = rand.NextDouble() * -100.0;
+                        await SQLiteContext.AddTransaction(am.Id, DateTime.Now - TimeSpan.FromHours(i*8), transVal, $"Transaction {i}", null);
+                        am.Balance += transVal;
+                    }
+                    await SQLiteContext.UpdateAccount(am);
                 }
             }
         }
@@ -76,6 +87,7 @@ namespace FinanceTracker.WPF
         public void NavigationStateChanged(object sender, NavigationViewModel m)
         {
             MessageBox.Show("test");
+            ViewState = MainWindowViewState.None;
         }
         public void NavigationStateChanged(object sender, AccountModel m)
         {

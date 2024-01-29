@@ -14,8 +14,12 @@ namespace FinanceTracker.WPF
         public double Balance { get { return _m.Balance; } }
         public string AccountName { get { return _m.Name; } }
         public string CurrencyType { get { return _m.CurrencyType; } }
-        public TimeSpan TransactionFrequency { get; private set; }
-        public double AveragePurchaseCost { get; private set; }
+
+        private double _transactionFrequency =0.0;
+        public double TransactionFrequency { get { return _transactionFrequency; } private set { _transactionFrequency = value; Notify(); } }
+
+        private double _averagePurchaseCost = 0.0;
+        public double AveragePurchaseCost { get { return _averagePurchaseCost; } private set { _averagePurchaseCost = value; Notify(); } }
 
         public ObservableCollection<CategoryStats> Categories { get; set; } = new ObservableCollection<CategoryStats>();
         public ObservableCollection<TransactionModel> Transactions { get; set; } = new ObservableCollection<TransactionModel>();
@@ -29,6 +33,10 @@ namespace FinanceTracker.WPF
             if (_m.Id == Guid.Empty)
                 return;
 
+            Notify(nameof(Balance));
+            Notify(nameof(AccountName));
+            Notify(nameof(CurrencyType));
+
             List<TransactionModel> transactions = await SQLiteContext.GetAllAccountTransactionsAsync(_m.Id);
             foreach(TransactionModel transaction in transactions)
             {
@@ -38,12 +46,21 @@ namespace FinanceTracker.WPF
             TimeSpan avgPeriod = TimeSpan.FromDays(30);
             double spent = 0.0;
             List<TransactionModel> lastMonthTrans = await SQLiteContext.GetAllAccountTransactionsAsync(_m.Id, DateTime.Now - avgPeriod);
-            foreach (TransactionModel transaction in lastMonthTrans)
+            if(lastMonthTrans != null && lastMonthTrans.Count > 0)
             {
-                spent += transaction.DollarValue;
+                foreach (TransactionModel transaction in lastMonthTrans)
+                {
+                    spent += transaction.DollarValue;
+                }
+                AveragePurchaseCost = spent / lastMonthTrans.Count;
+                TransactionFrequency = lastMonthTrans.Count / avgPeriod.TotalDays;
             }
-            AveragePurchaseCost = spent / lastMonthTrans.Count;
-            TransactionFrequency = avgPeriod / lastMonthTrans.Count;
+            else
+            {
+                AveragePurchaseCost = 0.0;
+                TransactionFrequency = 0.0;
+            }
+            
 
             List<CategoryModel> categories = await SQLiteContext.GetAllCategories();
             foreach(CategoryModel category in categories)
