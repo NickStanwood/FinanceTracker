@@ -21,15 +21,16 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Button Grid.Row ="0" Grid.Column="0" 
-                Content="Add Account" Margin="5,3,5,3"
-                Command="{Binding AddAccountCmd}"/>
+        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+            <MenuItem Header="File"></MenuItem>
+        </Menu>
 
         <!-- Navigation pane -->
         <TreeView Grid.Row="1" Grid.Column="0" 
+                  x:Name="NavTree"
                   ItemsSource="{Binding NavigationItems}"
                   SelectedItemChanged="TreeView_SelectedItemChanged">
             <TreeView.ItemContainerStyle>
@@ -52,7 +53,19 @@
                 <HierarchicalDataTemplate 
                         DataType="{x:Type local:AccountNavigationViewModel}"
                         ItemsSource="{Binding AccountList}">
-                    <TextBlock Text="{Binding Name}"/>
+                    <!--<Grid HorizontalAlignment="Stretch" Width="{Binding ActualWidth, ElementName=NavTree}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding Name}"/>
+                        <Button Grid.Column="1" Content="Add" Command="{Binding AddAccountCmd}"/>
+                    </Grid>-->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Grid.Column="0" Text="{Binding Name}"/>
+                        <Button Content="+" Width="16" Height="16" Padding="-7" VerticalContentAlignment="Top" FontWeight="Bold" Margin="10,0,0,0"
+                                Command="{Binding Path=DataContext.AddAccountCmd, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/>
+                    </StackPanel>
                 </HierarchicalDataTemplate>
                 <DataTemplate DataType="{x:Type model:AccountModel}">
                     <TextBlock Text="{Binding Name}" FontWeight="Medium"/>
@@ -60,13 +73,13 @@
             </TreeView.Resources>
         </TreeView>
 
-        <!--<local:AccountUserControl Grid.Row="1" Grid.Column="1" 
+        <local:AccountUserControl Grid.Row="1" Grid.Column="1" 
+                                  Account="{Binding AccountViewModel}"
             Visibility="{Binding Path=ViewState, 
                                  NotifyOnSourceUpdated=True,
                                  Converter={StaticResource ViewStateVisibilityConverter}, 
-                                 ConverterParameter={x:Static local:MainWindowViewState.Account}}"
-            DataContext="{Binding AccountViewModel}"/>-->
-        <TextBlock Grid.Row="1" Grid.Column="1" 
+                                 ConverterParameter={x:Static local:MainWindowViewState.Account}}"/>
+        <!--<TextBlock Grid.Row="1" Grid.Column="1" 
             Visibility="{Binding Path=ViewState, 
                                  Converter={StaticResource ViewStateVisibilityConverter}, 
                                  ConverterParameter={x:Static local:MainWindowViewState.None}}"
@@ -75,6 +88,6 @@
             Visibility="{Binding Path=ViewState, 
                                  Converter={StaticResource ViewStateVisibilityConverter}, 
                                  ConverterParameter={x:Static local:MainWindowViewState.Account}}"
-            Text="Account Selected"/>
+            Text="Account Selected"/>-->
     </Grid>
 </Window>

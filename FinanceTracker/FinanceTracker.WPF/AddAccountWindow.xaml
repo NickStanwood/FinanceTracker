@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FinanceTracker.WPF"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="Add Account" Height="150" Width="220" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
     <Grid>
         <Grid.ColumnDefinitions>

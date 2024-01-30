@@ -33,7 +33,8 @@ namespace FinanceTracker.WPF
 
         private MainWindowViewState _viewState = MainWindowViewState.None;
         public MainWindowViewState ViewState { get { return _viewState; } set { _viewState = value; Notify(); } }
-        public AccountViewModel AccountViewModel { get; set; } = new AccountViewModel();
+        public AccountViewModel _accountViewModel = new AccountViewModel();
+        public AccountViewModel AccountViewModel { get { return _accountViewModel; } set { _accountViewModel = value; Notify(); } }
 
         public FinancesViewModel()
         {
@@ -86,12 +87,11 @@ namespace FinanceTracker.WPF
 
         public void NavigationStateChanged(object sender, NavigationViewModel m)
         {
-            MessageBox.Show("test");
             ViewState = MainWindowViewState.None;
         }
         public void NavigationStateChanged(object sender, AccountModel m)
         {
-            AccountViewModel.SetModel(m);
+            AccountViewModel = new AccountViewModel(m);
             ViewState = MainWindowViewState.Account;
         }
 
