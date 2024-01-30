@@ -20,6 +20,24 @@ namespace FinanceTracker.WPF
     /// </summary>
     public partial class AccountUserControl : UserControl
     {
+        public static readonly DependencyProperty AccountProperty = DependencyProperty.Register("Account", typeof(AccountViewModel), typeof(AccountUserControl), new PropertyMetadata(null, AccountPropertyChanged));
+
+        public AccountViewModel Account
+        {
+            get { return (AccountViewModel)GetValue(AccountProperty); }
+            set { SetValue(AccountProperty, value); }
+        }
+
+        private void AccountPropertyChanged(AccountViewModel account)
+        {
+
+        }
+
+        private static void AccountPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AccountUserControl)d).AccountPropertyChanged((AccountViewModel)e.NewValue);
+        }
+
         public AccountUserControl()
         {
             InitializeComponent();

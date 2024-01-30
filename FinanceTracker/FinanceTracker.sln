@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.WPF", "Finan
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.Models", "FinanceTracker.Models\FinanceTracker.Models.csproj", "{115D9103-50F4-4DF0-8D43-1AD5FDBE3317}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTracker.Core", "FinanceTracker.Core\FinanceTracker.Core.csproj", "{026B4382-260C-4462-9B0D-D969A45F9F2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{115D9103-50F4-4DF0-8D43-1AD5FDBE3317}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{115D9103-50F4-4DF0-8D43-1AD5FDBE3317}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{115D9103-50F4-4DF0-8D43-1AD5FDBE3317}.Release|Any CPU.Build.0 = Release|Any CPU
+		{026B4382-260C-4462-9B0D-D969A45F9F2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{026B4382-260C-4462-9B0D-D969A45F9F2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{026B4382-260C-4462-9B0D-D969A45F9F2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{026B4382-260C-4462-9B0D-D969A45F9F2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

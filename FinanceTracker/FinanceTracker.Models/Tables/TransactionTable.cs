@@ -4,7 +4,7 @@ namespace FinanceTracker.Models
 {
     internal class TransactionTable
     {
-        public async Task<TransactionModel?> InsertTransaction(SQLiteAsyncConnection conn, Guid accId, DateTime date, string name, string category, double dollars)
+        public async Task<TransactionModel?> InsertTransaction(SQLiteAsyncConnection conn, Guid accId, DateTime date, double dollars, string name, Guid? categoryId)
         {
             TransactionModel transaction = new TransactionModel 
             { 
@@ -12,7 +12,7 @@ namespace FinanceTracker.Models
                 AccountId = accId, 
                 Date = date, 
                 Name = name, 
-                Category = category,
+                CategoryId = categoryId,
                 DollarValue = dollars
             };
 
@@ -21,14 +21,18 @@ namespace FinanceTracker.Models
                 return transaction;
             return null;
         }
-        public async Task<List<TransactionModel>> SelectTransactions(SQLiteAsyncConnection conn, Guid accId)
+        public async Task<List<TransactionModel>> SelectAccountTransactions(SQLiteAsyncConnection conn, Guid accId)
         {
             return await conn.Table<TransactionModel>().Where(o => o.AccountId == accId).ToListAsync();
         }
-
-        public async Task<List<TransactionModel>> SelectTransactions(SQLiteAsyncConnection conn, string category)
+        public async Task<List<TransactionModel>> SelectTransactions(SQLiteAsyncConnection conn, Guid accId, DateTime since)
         {
-            return await conn.Table<TransactionModel>().Where(o => o.Category == category).ToListAsync();
+            return await conn.Table<TransactionModel>().Where(o => o.AccountId == accId && o.Date > since).ToListAsync();
+        }
+
+        public async Task<List<TransactionModel>> SelectCategoryTransactions(SQLiteAsyncConnection conn, Guid categoryId)
+        {
+            return await conn.Table<TransactionModel>().Where(o => o.CategoryId == categoryId).ToListAsync();
         }
 
         public async Task<List<AccountModel>> SelectAll(SQLiteAsyncConnection conn)

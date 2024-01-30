@@ -17,6 +17,11 @@ namespace FinanceTracker.Models
                 return account;
             return null;
         }
+        public async Task UpdateAccount(SQLiteAsyncConnection conn, AccountModel acc)
+        {
+            conn.UpdateAsync(acc);
+        }
+
         public async Task<AccountModel> SelectAccount(SQLiteAsyncConnection conn, Guid accId)
         {
             return await conn.Table<AccountModel>().Where(o => o.Id == accId).FirstOrDefaultAsync();
