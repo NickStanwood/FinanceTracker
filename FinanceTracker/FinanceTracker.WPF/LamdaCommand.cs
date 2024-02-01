@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace FinanceTracker.WPF
 {
-    internal class LamdaCommand : ICommand
+    public class LamdaCommand : ICommand
     {
         public event EventHandler? CanExecuteChanged;
 

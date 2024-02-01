@@ -25,19 +25,47 @@ namespace FinanceTracker.WPF
         public TransactionConverterViewModel() : base() { }
         protected override void Initialize()
         {
-            //BrowseCmd
+            BrowseCmd = new LamdaCommand(
+                (obj) => true,
+                (obj) => BrowseForFile()
+            );
 
             ConvertCmd = new LamdaCommand(
                 (obj) => File.Exists(RawTransFilePath),
                 (obj) => ConvertTransactions()
             );
 
-            //ViewRulesCmd
+            ViewRulesCmd = new LamdaCommand(
+                (obj) => true,
+                (obj) => ViewConversions()
+            );
 
-            //SaveCmd
+            SaveCmd = new LamdaCommand(
+                (obj) => true,
+                (obj) => SaveTransactions()
+            );
         }
 
         private void ConvertTransactions()
+        {
+
+        }
+
+        private void BrowseForFile()
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            bool? result = dialog.ShowDialog();
+
+            if (result == true)
+                RawTransFilePath = dialog.FileName;
+        }
+
+        private void ViewConversions()
+        {
+
+        }
+
+        private void SaveTransactions()
         {
 
         }

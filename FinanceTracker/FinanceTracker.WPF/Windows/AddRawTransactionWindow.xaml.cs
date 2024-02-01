@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using FinanceTracker.Models;
 
 namespace FinanceTracker.WPF
 {
@@ -19,9 +20,11 @@ namespace FinanceTracker.WPF
     /// </summary>
     public partial class AddRawTransactionWindow : Window
     {
-        public AddRawTransactionWindow()
+        public AddRawTransactionWindow(AccountModel account)
         {
+            TransactionConverterViewModel vm = new TransactionConverterViewModel(account);
             InitializeComponent();
+            DataContext = vm;
         }
     }
 }
