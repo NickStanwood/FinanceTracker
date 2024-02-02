@@ -23,6 +23,7 @@ namespace FinanceTracker.WPF
 
         public ObservableCollection<CategoryStats> Categories { get; set; } = new ObservableCollection<CategoryStats>();
         public ObservableCollection<TransactionModel> Transactions { get; set; } = new ObservableCollection<TransactionModel>();
+        public LamdaCommand AddTransactions { get; set; }
         public AccountViewModel() : base() { }
         public AccountViewModel(AccountModel model) : base(model)
         {
@@ -32,6 +33,11 @@ namespace FinanceTracker.WPF
         {
             if (_m.Id == Guid.Empty)
                 return;
+            AddTransactions = new LamdaCommand(
+                (obj) => true,
+                (obj) => ShowTransactionsDialog()
+            );
+
 
             Notify(nameof(Balance));
             Notify(nameof(AccountName));
@@ -67,6 +73,12 @@ namespace FinanceTracker.WPF
             {
                 Categories.Add(new CategoryStats(category, transactions));
             }
+        }
+
+        private void ShowTransactionsDialog()
+        {
+            AddRawTransactionWindow transWin = new AddRawTransactionWindow(_m);
+            transWin.ShowDialog();
         }
 
     }
