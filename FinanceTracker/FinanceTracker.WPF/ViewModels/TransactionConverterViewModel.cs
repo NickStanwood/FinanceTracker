@@ -31,7 +31,7 @@ namespace FinanceTracker.WPF
             );
 
             ConvertCmd = new LamdaCommand(
-                (obj) => File.Exists(RawTransFilePath),
+                (obj) => true,
                 (obj) => ConvertTransactions()
             );
 
@@ -46,6 +46,11 @@ namespace FinanceTracker.WPF
             );
         }
 
+        private void ConvertCmd_CanExecuteChanged(object? sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         private void ConvertTransactions()
         {
 
@@ -57,7 +62,19 @@ namespace FinanceTracker.WPF
             bool? result = dialog.ShowDialog();
 
             if (result == true)
+            {
                 RawTransFilePath = dialog.FileName;
+
+                string fileText = File.ReadAllText(RawTransFilePath);
+                string[] lines = fileText.Split('\n');
+
+                RawTransactions.Clear();
+                foreach (string line in lines)
+                {
+                    RawTransactionModel model = new RawTransactionModel { RawTransaction = line};
+                    RawTransactions.Add(model);
+                }
+            }
         }
 
         private void ViewConversions()
