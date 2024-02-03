@@ -3,7 +3,7 @@ using SQLiteNetExtensions.Attributes;
 
 namespace FinanceTracker.Models
 {
-    public class ConversionRuleCategory
+    public class ConversionRuleCategoryModel
     {
         [PrimaryKey]
         public Guid Id { get; set; }

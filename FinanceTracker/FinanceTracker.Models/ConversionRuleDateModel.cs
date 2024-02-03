@@ -1,16 +1,17 @@
 ﻿using SQLite;
+using SQLiteNetExtensions.Attributes;
 
 namespace FinanceTracker.Models
 {
-    public class ConversionRuleDollarValue
+    public class ConversionRuleDateModel
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
-        //foreignkey AccountModel.Id
+        [ForeignKey(typeof(AccountModel))]
         public Guid AccountId { get; set; }
         public int Column { get; set; }
-        public bool ApplyNegation { get; set; }
+        public string DateFormat { get; set; }
 
         public bool UseAdvanced { get; set; }
         public string AdvancedScript { get; set; }

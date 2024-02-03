@@ -46,11 +46,6 @@ namespace FinanceTracker.WPF
             );
         }
 
-        private void ConvertCmd_CanExecuteChanged(object? sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         private void ConvertTransactions()
         {
 
@@ -79,7 +74,9 @@ namespace FinanceTracker.WPF
 
         private void ViewConversions()
         {
-
+            ConverterDeveloperViewModel convVm = new ConverterDeveloperViewModel(RawTransactions.FirstOrDefault()?.RawTransaction, _m);
+            ConverterDeveloperWindow converterWindow = new ConverterDeveloperWindow(convVm);
+            converterWindow.ShowDialog();
         }
 
         private void SaveTransactions()

@@ -14,6 +14,7 @@ namespace FinanceTracker.Models
         private static AccountTable _accountTable = new AccountTable();
         private static TransactionTable _transactionTable = new TransactionTable();
         private static CategoryTable _categoryTable = new CategoryTable();
+        private static ConversionRuleNameTable _conversionRuleNameTable = new ConversionRuleNameTable();
         private static async Task Initialize()
         {
             if (_conn != null)
@@ -24,6 +25,7 @@ namespace FinanceTracker.Models
             await _conn.CreateTableAsync<AccountModel>();
             await _conn.CreateTableAsync<TransactionModel>();
             await _conn.CreateTableAsync<CategoryModel>();
+            await _conn.CreateTableAsync<ConversionRuleNameModel>();
         }
 
         #region Account Table
@@ -43,7 +45,6 @@ namespace FinanceTracker.Models
             await _accountTable.UpdateAccount(_conn, acc);
         }
         #endregion
-
 
         #region Transaction Table
         public async static Task<TransactionModel?> AddTransaction(Guid accId, DateTime date, double dollars, string name, Guid? categoryId)
@@ -69,7 +70,15 @@ namespace FinanceTracker.Models
         {
             await Initialize();
             return await _categoryTable.SelectAll(_conn);
-        }        
+        }
+        #endregion
+
+        #region Conversion Tables
+        public async static Task<ConversionRuleNameModel> GetConversionRule_Name(Guid accId)
+        {
+            await Initialize();
+            return await _conversionRuleNameTable.Select(_conn, accId);
+        }
         #endregion
     }
 }

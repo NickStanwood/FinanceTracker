@@ -5,7 +5,7 @@ namespace FinanceTracker.Models
 {
     public class CategoryRegexModel
     {
-        [ForeignKey(typeof(ConversionRuleCategory))]
+        [ForeignKey(typeof(ConversionRuleCategoryModel))]
         public Guid CategoryConversionId { get; set; }
 
         [ForeignKey(typeof(CategoryModel))]
