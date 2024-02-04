@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using System.Text.RegularExpressions;
+using SQLite;
 using SQLiteNetExtensions.Attributes;
 
 namespace FinanceTracker.Models
@@ -14,5 +15,26 @@ namespace FinanceTracker.Models
 
         public bool UseAdvanced { get; set; }
         public string AdvancedScript { get; set; }
+
+        public async Task<CategoryModel> Convert(List<string> splitTrans)
+        {
+            if (UseAdvanced)
+                throw new NotImplementedException();
+
+            if (Column > splitTrans.Count - 1)
+                throw new ArgumentOutOfRangeException();
+
+            List<CategoryRegexModel> regexes = await SQLiteContext.GetCategoryRegexes(Id);
+            foreach(CategoryRegexModel rm in regexes)
+            {
+                Regex reg = new Regex(rm.Regex);
+                if(reg.IsMatch(splitTrans[Column]))
+                {
+                    CategoryModel model = await SQLiteContext.GetCategory(rm.CategoryId);
+                }
+            }
+
+            throw new FormatException();
+        }
     }
 }

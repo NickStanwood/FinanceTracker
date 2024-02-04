@@ -13,5 +13,9 @@ namespace FinanceTracker.Models
         {
             return await conn.Table<CategoryModel>().ToListAsync();
         }
+        public async Task<CategoryModel> Select(SQLiteAsyncConnection conn, Guid categoryId)
+        {
+            return await conn.Table<CategoryModel>().Where(o => o.Id == categoryId).FirstAsync();
+        }
     }
 }

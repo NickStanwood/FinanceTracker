@@ -14,6 +14,7 @@ namespace FinanceTracker.Models
         private static AccountTable _accountTable = new AccountTable();
         private static TransactionTable _transactionTable = new TransactionTable();
         private static CategoryTable _categoryTable = new CategoryTable();
+        private static CategoryRegexTable _categoryRegexTable = new CategoryRegexTable();
 
         private static ConversionRuleSplitterTable _conversionRuleSplitterTable = new ConversionRuleSplitterTable();
         private static ConversionRuleNameTable _conversionRuleNameTable = new ConversionRuleNameTable();
@@ -30,11 +31,12 @@ namespace FinanceTracker.Models
             _conn = new SQLiteAsyncConnection(connStr);
             await _conn.CreateTableAsync<AccountModel>();
             await _conn.CreateTableAsync<TransactionModel>();
-            await _conn.CreateTableAsync<CategoryModel>();
             await _conn.CreateTableAsync<ConversionRuleNameModel>();
             await _conn.CreateTableAsync<ConversionRuleDateModel>();
             await _conn.CreateTableAsync<ConversionRuleCategoryModel>();
             await _conn.CreateTableAsync<ConversionRuleDollarValueModel>();
+            await _conn.CreateTableAsync<CategoryModel>();
+            await _conn.CreateTableAsync<CategoryRegexModel>();
         }
 
         #region Account Table
@@ -75,11 +77,24 @@ namespace FinanceTracker.Models
         #endregion
 
         #region Category Table
+        public async static Task<CategoryModel> GetCategory(Guid categoryId)
+        {
+            await Initialize();
+            return await _categoryTable.Select(_conn, categoryId);
+        }
+
         public async static Task<List<CategoryModel>> GetAllCategories()
         {
             await Initialize();
             return await _categoryTable.SelectAll(_conn);
         }
+
+        public async static Task<List<CategoryRegexModel>> GetCategoryRegexes(Guid conversionRuleId)
+        {
+            await Initialize();
+            return await _categoryRegexTable.SelectConversionRuleRegexes(_conn, conversionRuleId);
+        }
+
         #endregion
 
         #region Conversion Tables

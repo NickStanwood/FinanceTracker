@@ -16,8 +16,9 @@
         </Grid.ColumnDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <TextBlock Text="Raw Transtactions"/>
+                <TextBlock Text="Raw Transtaction"/>
                 <TextBox Text="{Binding RawTransaction}"/>
+                <TextBlock Text="Split Transtaction"/>
                 <ListBox ItemsSource="{Binding SplitTransaction}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>

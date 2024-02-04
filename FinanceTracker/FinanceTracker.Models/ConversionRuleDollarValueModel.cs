@@ -25,10 +25,13 @@ namespace FinanceTracker.Models
                 throw new ArgumentOutOfRangeException();
 
             double val;
-            if(double.TryParse(splitTrans[Column], out val))
-                return val;
+            if(!double.TryParse(splitTrans[Column], out val))
+                throw new FormatException();
 
-            throw new FormatException();
+            if (ApplyNegation)
+                val *= -1;
+
+            return val;
         }
     }
 }
