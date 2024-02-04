@@ -3,32 +3,28 @@ using SQLiteNetExtensions.Attributes;
 
 namespace FinanceTracker.Models
 {
-    public class ConversionRuleDollarValueModel
+    public class ConversionRuleSplitterModel
     {
         [PrimaryKey]
         public Guid Id { get; set; }
 
         [ForeignKey(typeof(AccountModel))]
         public Guid AccountId { get; set; }
-        public int Column { get; set; }
-        public bool ApplyNegation { get; set; }
+        public string DelimChar { get; set; }
+        public bool IgnoreDelimInQuotes { get; set; }
 
         public bool UseAdvanced { get; set; }
         public string AdvancedScript { get; set; }
 
-        public double Convert(List<string> splitTrans)
+        public string[] Convert(string rawTrans)
         {
             if (UseAdvanced)
                 throw new NotImplementedException();
 
-            if (Column > splitTrans.Count - 1)
-                throw new ArgumentOutOfRangeException();
+            if(IgnoreDelimInQuotes)
+                throw new NotImplementedException();
 
-            double val;
-            if(double.TryParse(splitTrans[Column], out val))
-                return val;
-
-            throw new FormatException();
+            return rawTrans.Split(DelimChar);
         }
     }
 }

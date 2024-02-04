@@ -14,7 +14,13 @@ namespace FinanceTracker.Models
         private static AccountTable _accountTable = new AccountTable();
         private static TransactionTable _transactionTable = new TransactionTable();
         private static CategoryTable _categoryTable = new CategoryTable();
+
+        private static ConversionRuleSplitterTable _conversionRuleSplitterTable = new ConversionRuleSplitterTable();
         private static ConversionRuleNameTable _conversionRuleNameTable = new ConversionRuleNameTable();
+        private static ConversionRuleDateTable _conversionRuleDateTable = new ConversionRuleDateTable();
+        private static ConversionRuleCategoryTable _conversionRuleCategoryTable = new ConversionRuleCategoryTable();
+        private static ConversionRuleDollarValueTable _conversionRuleDollarValueTable = new ConversionRuleDollarValueTable();
+        private static ConversionRuleBalanceTable _conversionRuleBalanceTable = new ConversionRuleBalanceTable();
         private static async Task Initialize()
         {
             if (_conn != null)
@@ -26,6 +32,9 @@ namespace FinanceTracker.Models
             await _conn.CreateTableAsync<TransactionModel>();
             await _conn.CreateTableAsync<CategoryModel>();
             await _conn.CreateTableAsync<ConversionRuleNameModel>();
+            await _conn.CreateTableAsync<ConversionRuleDateModel>();
+            await _conn.CreateTableAsync<ConversionRuleCategoryModel>();
+            await _conn.CreateTableAsync<ConversionRuleDollarValueModel>();
         }
 
         #region Account Table
@@ -74,10 +83,40 @@ namespace FinanceTracker.Models
         #endregion
 
         #region Conversion Tables
+        public async static Task<ConversionRuleSplitterModel> GetConversionRule_Splitter(Guid accId)
+        {
+            await Initialize();
+            return await _conversionRuleSplitterTable.Select(_conn, accId);
+        }
+
         public async static Task<ConversionRuleNameModel> GetConversionRule_Name(Guid accId)
         {
             await Initialize();
             return await _conversionRuleNameTable.Select(_conn, accId);
+        }
+
+        public async static Task<ConversionRuleDateModel> GetConversionRule_Date(Guid accId)
+        {
+            await Initialize();
+            return await _conversionRuleDateTable.Select(_conn, accId);
+        }
+
+        public async static Task<ConversionRuleCategoryModel> GetConversionRule_Category(Guid accId)
+        {
+            await Initialize();
+            return await _conversionRuleCategoryTable.Select(_conn, accId);
+        }
+
+        public async static Task<ConversionRuleDollarValueModel> GetConversionRule_DollarValue(Guid accId)
+        {
+            await Initialize();
+            return await _conversionRuleDollarValueTable.Select(_conn, accId);
+        }
+
+        public async static Task<ConversionRuleBalanceModel> GetConversionRule_Balance(Guid accId)
+        {
+            await Initialize();
+            return await _conversionRuleBalanceTable.Select(_conn, accId);
         }
         #endregion
     }
