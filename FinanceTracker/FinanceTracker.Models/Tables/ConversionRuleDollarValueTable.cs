@@ -18,7 +18,12 @@ namespace FinanceTracker.Models
             return conv;
         }
 
-        public async Task<ConversionRuleDollarValueModel> InsertDefault(SQLiteAsyncConnection conn, Guid accId)
+        public async Task Update(SQLiteAsyncConnection conn, ConversionRuleDollarValueModel dollarValueRule)
+        {
+            await conn.UpdateAsync(dollarValueRule);
+        }
+
+        private async Task<ConversionRuleDollarValueModel> InsertDefault(SQLiteAsyncConnection conn, Guid accId)
         {
             ConversionRuleDollarValueModel conv = new ConversionRuleDollarValueModel
             {

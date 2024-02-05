@@ -19,6 +19,11 @@ namespace FinanceTracker.Models
             return conv;
         }
 
+        public async Task Update(SQLiteAsyncConnection conn, ConversionRuleBalanceModel balanceRule)
+        {
+            await conn.UpdateAsync(balanceRule);
+        }
+
         public async Task<ConversionRuleBalanceModel> InsertDefault(SQLiteAsyncConnection conn, Guid accId)
         {
             ConversionRuleBalanceModel conv = new ConversionRuleBalanceModel

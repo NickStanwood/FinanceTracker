@@ -17,6 +17,12 @@ namespace FinanceTracker.Models
 
             return conv;
         }
+
+        public async Task Update(SQLiteAsyncConnection conn, ConversionRuleDateModel dateRule)
+        {
+            await conn.UpdateAsync(dateRule);
+        }
+
         public async Task<ConversionRuleDateModel> InsertDefault(SQLiteAsyncConnection conn, Guid accId)
         {
             ConversionRuleDateModel conv = new ConversionRuleDateModel 

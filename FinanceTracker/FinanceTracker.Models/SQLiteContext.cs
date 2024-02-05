@@ -35,6 +35,8 @@ namespace FinanceTracker.Models
             await _conn.CreateTableAsync<ConversionRuleDateModel>();
             await _conn.CreateTableAsync<ConversionRuleCategoryModel>();
             await _conn.CreateTableAsync<ConversionRuleDollarValueModel>();
+            await _conn.CreateTableAsync<ConversionRuleBalanceModel>();
+            await _conn.CreateTableAsync<ConversionRuleSplitterModel>();
             await _conn.CreateTableAsync<CategoryModel>();
             await _conn.CreateTableAsync<CategoryRegexModel>();
         }
@@ -132,6 +134,38 @@ namespace FinanceTracker.Models
         {
             await Initialize();
             return await _conversionRuleBalanceTable.Select(_conn, accId);
+        }
+
+        public async static Task UpdateConversionRule_Splitter(ConversionRuleSplitterModel splitterRule)
+        {
+            await Initialize();
+            await _conversionRuleSplitterTable.Update(_conn, splitterRule);
+        }
+        public async static Task UpdateConversionRule_Name(ConversionRuleNameModel nameRule)
+        {
+            await Initialize();
+            await _conversionRuleNameTable.Update(_conn, nameRule);
+        }
+        public async static Task UpdateConversionRule_Date(ConversionRuleDateModel dateRule)
+        {
+            await Initialize();
+            await _conversionRuleDateTable.Update(_conn, dateRule);
+        }
+        public async static Task UpdateConversionRule_DollarValue(ConversionRuleDollarValueModel dollarValueRule)
+        {
+            await Initialize();
+            await _conversionRuleDollarValueTable.Update(_conn, dollarValueRule);
+        }
+        public async static Task UpdateConversionRule_Balance(ConversionRuleBalanceModel balanceRule)
+        {
+            await Initialize();
+            await _conversionRuleBalanceTable.Update(_conn, balanceRule);
+        }
+        public async static Task UpdateConversionRule_Category(ConversionRuleCategoryModel categoryRule)
+        {
+            await Initialize();
+            await _conversionRuleCategoryTable.Update(_conn, categoryRule);
+            //TODO update regex list 
         }
         #endregion
     }

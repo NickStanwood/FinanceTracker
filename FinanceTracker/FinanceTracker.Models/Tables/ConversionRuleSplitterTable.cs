@@ -18,6 +18,11 @@ namespace FinanceTracker.Models
             return conv;
         }
 
+        public async Task Update(SQLiteAsyncConnection conn, ConversionRuleSplitterModel splitterRule)
+        {
+            await conn.UpdateAsync(splitterRule);
+        }
+
         public async Task<ConversionRuleSplitterModel> InsertDefault(SQLiteAsyncConnection conn, Guid accId)
         {
             ConversionRuleSplitterModel conv = new ConversionRuleSplitterModel
