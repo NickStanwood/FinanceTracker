@@ -33,7 +33,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <TextBlock Text="Converted Transaction Values"  FontSize="16"/>
+                <TextBlock Text="Converted Transaction Values" FontSize="16"/>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
@@ -67,7 +67,8 @@
                     <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Category.Name}" IsReadOnly="True" Margin="3"/>
                     <Button Grid.Row="4" Grid.Column="2" Content="View" Command="{Binding ViewCommand}" CommandParameter="category" Margin="3"/>
                 </Grid>
-                <TextBox IsReadOnly="True" Height="200" Text="{Binding Output}" HorizontalAlignment="Stretch" TextWrapping="Wrap"/>
+                <TextBlock Text="Conversion Output" FontSize="16"/>
+                <TextBox IsReadOnly="True" Height="100" Text="{Binding Output}" HorizontalAlignment="Stretch" TextWrapping="Wrap"/>
                 <Button Content="Convert" Command="{Binding ConvertCommand}" Margin="3"/>
             </StackPanel>
         </ScrollViewer>
