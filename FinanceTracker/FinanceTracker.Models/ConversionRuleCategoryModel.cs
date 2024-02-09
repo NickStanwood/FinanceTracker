@@ -36,5 +36,16 @@ namespace FinanceTracker.Models
 
             throw new FormatException();
         }
+        public async Task<CategoryModel?> TryConvert(List<string> splitTrans)
+        {
+            try
+            {
+                return await Convert(splitTrans);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

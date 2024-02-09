@@ -32,7 +32,7 @@ namespace FinanceTracker.WPF
 
             ConvertCmd = new LamdaCommand(
                 (obj) => true,
-                (obj) => ConvertTransactions()
+                async (obj) => await ConvertTransactions()
             );
 
             ViewRulesCmd = new LamdaCommand(
@@ -42,12 +42,47 @@ namespace FinanceTracker.WPF
 
             SaveCmd = new LamdaCommand(
                 (obj) => true,
-                (obj) => SaveTransactions()
+                async (obj) => await SaveTransactions()
             );
         }
 
-        private void ConvertTransactions()
+        private async Task ConvertTransactions()
         {
+            var splitterRule = await SQLiteContext.GetConversionRule_Splitter(_m.Id);
+            var nameRule = await SQLiteContext.GetConversionRule_Name(_m.Id);
+            var dateRule = await SQLiteContext.GetConversionRule_Date(_m.Id);
+            var dollarValueRule = await SQLiteContext.GetConversionRule_DollarValue(_m.Id);
+            var categoryRule = await SQLiteContext.GetConversionRule_Category(_m.Id);
+            var balanceRule = await SQLiteContext.GetConversionRule_Balance(_m.Id);
+
+            Transactions.Clear();
+            foreach (RawTransactionModel trans in RawTransactions)
+            {
+                try
+                {
+                    List<string> splitTrans = splitterRule.Convert(trans.RawTransaction).ToList();
+                    string name = nameRule.Convert(splitTrans);
+                    DateTime date = dateRule.Convert(splitTrans);
+                    double dollarValue = dollarValueRule.Convert(splitTrans);
+                    double balance = balanceRule.Convert(splitTrans);
+                    CategoryModel? category = await categoryRule.TryConvert(splitTrans);
+
+                    TransactionModel tm = new TransactionModel
+                    {
+                        AccountId = _m.Id,
+                        Name = name,
+                        Date = date,
+                        DollarValue = dollarValue,
+                        Balance = balance,
+                        CategoryId = category?.Id,
+                    };
+                    Transactions.Add(tm);
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+            }
 
         }
 
@@ -79,9 +114,14 @@ namespace FinanceTracker.WPF
             converterWindow.ShowDialog();
         }
 
-        private void SaveTransactions()
+        private async Task SaveTransactions()
         {
+            foreach(TransactionModel trans in Transactions)
+            {
+                TransactionModel? tm = await SQLiteContext.AddTransaction(trans);
+            }
 
+            Transactions.Clear();
         }
     }
 }

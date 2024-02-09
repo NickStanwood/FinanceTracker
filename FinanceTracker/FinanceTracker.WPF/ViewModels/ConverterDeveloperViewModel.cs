@@ -144,8 +144,7 @@ namespace FinanceTracker.WPF
                 string[] splitTrans = _conversionRuleSplitter.Convert(RawTransaction);
                 foreach (string split in splitTrans)
                 {
-                    if (split != "")
-                        SplitTransaction.Add(split);
+                    SplitTransaction.Add(split);
                 }
 
             }

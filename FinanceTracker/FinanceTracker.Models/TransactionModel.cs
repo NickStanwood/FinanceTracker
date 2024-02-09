@@ -15,5 +15,6 @@ namespace FinanceTracker.Models
         [ForeignKey(typeof(CategoryModel))]
         public Guid? CategoryId { get; set; }
         public double DollarValue { get; set; }
+        public double? Balance { get; set; }
     }
 }

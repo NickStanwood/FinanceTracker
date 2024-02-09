@@ -60,10 +60,10 @@ namespace FinanceTracker.Models
         #endregion
 
         #region Transaction Table
-        public async static Task<TransactionModel?> AddTransaction(Guid accId, DateTime date, double dollars, string name, Guid? categoryId)
+        public async static Task<TransactionModel?> AddTransaction(TransactionModel transaction)
         {
             await Initialize();
-            return await _transactionTable.InsertTransaction(_conn, accId, date, dollars, name, categoryId);
+            return await _transactionTable.InsertTransaction(_conn, transaction);
         }
 
         public async static Task<List<TransactionModel>> GetAllAccountTransactionsAsync(Guid accId)
