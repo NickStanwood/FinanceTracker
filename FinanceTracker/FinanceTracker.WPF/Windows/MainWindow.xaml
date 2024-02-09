@@ -79,15 +79,20 @@
                                  NotifyOnSourceUpdated=True,
                                  Converter={StaticResource ViewStateVisibilityConverter}, 
                                  ConverterParameter={x:Static local:MainWindowViewState.Account}}"/>
-        <!--<TextBlock Grid.Row="1" Grid.Column="1" 
-            Visibility="{Binding Path=ViewState, 
-                                 Converter={StaticResource ViewStateVisibilityConverter}, 
-                                 ConverterParameter={x:Static local:MainWindowViewState.None}}"
-            Text="No Navigation Menu Selected"/>
         <TextBlock Grid.Row="1" Grid.Column="1" 
             Visibility="{Binding Path=ViewState, 
                                  Converter={StaticResource ViewStateVisibilityConverter}, 
-                                 ConverterParameter={x:Static local:MainWindowViewState.Account}}"
-            Text="Account Selected"/>-->
+                                 ConverterParameter={x:Static local:MainWindowViewState.Budget}}"
+            Text="Budget Page not Implemented"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" 
+            Visibility="{Binding Path=ViewState, 
+                                 Converter={StaticResource ViewStateVisibilityConverter}, 
+                                 ConverterParameter={x:Static local:MainWindowViewState.NetWorth}}"
+            Text="Net Worth Page not Implemented"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" 
+            Visibility="{Binding Path=ViewState, 
+                                 Converter={StaticResource ViewStateVisibilityConverter}, 
+                                 ConverterParameter={x:Static local:MainWindowViewState.Goals}}"
+            Text="Goals Page not Implemented"/>
     </Grid>
 </Window>

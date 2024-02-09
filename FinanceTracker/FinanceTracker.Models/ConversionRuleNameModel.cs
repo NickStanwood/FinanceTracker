@@ -3,7 +3,7 @@ using SQLiteNetExtensions.Attributes;
 
 namespace FinanceTracker.Models
 {
-    public class ConversionRuleName
+    public class ConversionRuleNameModel
     {
         [PrimaryKey]
         public Guid Id { get; set; }
@@ -14,5 +14,16 @@ namespace FinanceTracker.Models
 
         public bool UseAdvanced { get; set; }
         public string AdvancedScript { get; set; }
+
+        public string Convert(List<string> splitTrans)
+        {
+            if (UseAdvanced)
+                throw new NotImplementedException();
+
+            if (Column > splitTrans.Count - 1)
+                throw new ArgumentOutOfRangeException();
+
+            return splitTrans[Column];
+        }
     }
 }
