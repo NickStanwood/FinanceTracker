@@ -64,7 +64,7 @@ namespace FinanceTracker.WPF
                     string name = nameRule.Convert(splitTrans);
                     DateTime date = dateRule.Convert(splitTrans);
                     double dollarValue = dollarValueRule.Convert(splitTrans);
-                    double balance = balanceRule.Convert(splitTrans);
+                    double? balance = balanceRule.TryConvert(splitTrans);
                     CategoryModel? category = await categoryRule.TryConvert(splitTrans);
 
                     TransactionModel tm = new TransactionModel

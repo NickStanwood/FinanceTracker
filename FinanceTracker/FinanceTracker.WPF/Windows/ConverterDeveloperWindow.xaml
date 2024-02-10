@@ -88,7 +88,7 @@
                     <TextBox Text="{Binding DelimChar}" Width="80"/>
                 </StackPanel>
                 <CheckBox Content="Multiply by negative one"   IsChecked="{Binding ApplyNegation}"       Visibility="{Binding ApplyNegationVisible}"/>
-                <CheckBox Content="Additive update"            IsChecked="{Binding AdditiveUpdate}"      Visibility="{Binding AdditiveUpdateVisible}"/>
+                <CheckBox Content="Data Available"             IsChecked="{Binding DataAvailable}"       Visibility="{Binding AdditiveUpdateVisible}"/>
                 <CheckBox Content="Ignore delimeter in quotes" IsChecked="{Binding IgnoreDelimInQuotes}" Visibility="{Binding IgnoreDelimInQuotesVisible}"/>
                 <Button Content="Save Changes" Command="{Binding SaveCommand}"/>
             </StackPanel>            

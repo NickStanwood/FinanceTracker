@@ -32,7 +32,7 @@ namespace FinanceTracker.Models
                 AccountId = accId,
                 Column = 0,
                 ApplyNegation = false,
-                AdditiveUpdate = false,
+                DataAvailable = false,
                 UseAdvanced = false,
                 AdvancedScript = "function GetNewBalance(splitTrans, currBalance){\n\n}"
             };

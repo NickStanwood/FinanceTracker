@@ -11,9 +11,11 @@ namespace FinanceTracker.WPF
 {
     public class AccountViewModel : ViewModelBase<AccountModel>
     {
-        public double Balance { get { return _m.Balance; } }
         public string AccountName { get { return _m.Name; } }
         public string CurrencyType { get { return _m.CurrencyType; } }
+
+        private double _balance;
+        public double Balance { get { return _balance; } set { _balance = value; Notify(); } }
 
         private double _transactionFrequency =0.0;
         public double TransactionFrequency { get { return _transactionFrequency; } private set { _transactionFrequency = value; Notify(); } }
@@ -35,6 +37,7 @@ namespace FinanceTracker.WPF
             if (_m.Id == Guid.Empty)
                 return;
 
+            //setup commands
             AddTransactions = new LamdaCommand(
                 (obj) => true,
                 (obj) => ShowTransactionsDialog()
@@ -42,19 +45,20 @@ namespace FinanceTracker.WPF
 
             UpdateBalance = new LamdaCommand(
                 (obj) => true,
-                (obj) => ShowTransactionsDialog()
+                (obj) => ShowBalanceDialog()
             );
 
-            Notify(nameof(Balance));
             Notify(nameof(AccountName));
             Notify(nameof(CurrencyType));
 
+            //create list of all transactions
             List<TransactionModel> transactions = await SQLiteContext.GetAllAccountTransactionsAsync(_m.Id);
             foreach(TransactionModel transaction in transactions)
             {
                 Transactions.Add(transaction);
             }
 
+            //average out the transactions in the past month
             TimeSpan avgPeriod = TimeSpan.FromDays(30);
             double spent = 0.0;
             List<TransactionModel> lastMonthTrans = await SQLiteContext.GetAllAccountTransactionsAsync(_m.Id, DateTime.Now - avgPeriod);
@@ -72,8 +76,13 @@ namespace FinanceTracker.WPF
                 AveragePurchaseCost = 0.0;
                 TransactionFrequency = 0.0;
             }
-            
 
+            //get account balance
+            TransactionModel? b = await SQLiteContext.GetAccountBalanceAsync(_m.Id);
+            if (b != null)
+                Balance = b.Balance != null ? (double)b.Balance : 0.0;
+
+            //TODO
             List<CategoryModel> categories = await SQLiteContext.GetAllCategories();
             foreach(CategoryModel category in categories)
             {
@@ -86,9 +95,21 @@ namespace FinanceTracker.WPF
             AddRawTransactionWindow transWin = new AddRawTransactionWindow(_m);
             transWin.ShowDialog();
         }
-        private void ShowBalanceDialog()
+        private async void ShowBalanceDialog()
         {
-            //TODO
+            AddBalanceTransactionWindow addBalanceDialog = new AddBalanceTransactionWindow();
+            if(addBalanceDialog.ShowDialog() == true)
+            {
+                TransactionModel trans = new TransactionModel
+                {
+                    AccountId = _m.Id,
+                    Balance = addBalanceDialog.Value,
+                    Date = addBalanceDialog.Date,
+                    Name = "[Manual Account Balance Update]",
+                    DollarValue = 0.0,
+                };
+                TransactionModel? tm = await SQLiteContext.AddTransaction(trans);
+            }
         }
 
     }

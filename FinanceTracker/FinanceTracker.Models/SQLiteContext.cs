@@ -71,10 +71,16 @@ namespace FinanceTracker.Models
             await Initialize();
             return await _transactionTable.SelectAccountTransactions(_conn, accId);
         }
+
         public async static Task<List<TransactionModel>> GetAllAccountTransactionsAsync(Guid accId, DateTime since)
         {
             await Initialize();
             return await _transactionTable.SelectTransactions(_conn, accId, since);
+        }
+        public async static Task<TransactionModel> GetAccountBalanceAsync(Guid accId)
+        {
+            await Initialize();
+            return await _transactionTable.SelectBalanceTransaction(_conn, accId);
         }
         #endregion
 
