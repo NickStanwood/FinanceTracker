@@ -23,13 +23,19 @@ namespace FinanceTracker.Models
                 return tm;
             return null;
         }
+        public async Task<TransactionModel> SelectBalanceTransaction(SQLiteAsyncConnection conn, Guid accId)
+        {
+            return await conn.Table<TransactionModel>().Where(o => o.AccountId == accId && o.Balance != null).OrderByDescending(o => o.Date).FirstOrDefaultAsync();
+        }
+
         public async Task<List<TransactionModel>> SelectAccountTransactions(SQLiteAsyncConnection conn, Guid accId)
         {
-            return await conn.Table<TransactionModel>().Where(o => o.AccountId == accId).ToListAsync();
+            return await conn.Table<TransactionModel>().Where(o => o.AccountId == accId).OrderByDescending(o => o.Date).ToListAsync();
         }
+
         public async Task<List<TransactionModel>> SelectTransactions(SQLiteAsyncConnection conn, Guid accId, DateTime since)
         {
-            return await conn.Table<TransactionModel>().Where(o => o.AccountId == accId && o.Date > since).ToListAsync();
+            return await conn.Table<TransactionModel>().Where(o => o.AccountId == accId && o.Date > since).OrderByDescending(o => o.Date).ToListAsync();
         }
 
         public async Task<List<TransactionModel>> SelectCategoryTransactions(SQLiteAsyncConnection conn, Guid categoryId)

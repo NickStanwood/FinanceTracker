@@ -21,7 +21,10 @@
                    Text="{Binding Account.AccountName}" 
                    FontWeight="Bold" FontSize="20" HorizontalAlignment="Stretch" Background="SeaGreen" TextAlignment="Center"/>
 
-        <Button Grid.Row="1" Content="Add Transactions" Margin="2,3,10,3" Command="{Binding Account.AddTransactions}"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button Content="Add Transactions" Margin="2,3,10,3" Command="{Binding Account.AddTransactions}"/>
+            <Button Content="Update Balance" Margin="2,3,10,3" Command="{Binding Account.UpdateBalance}"/>
+        </StackPanel>
         <ListView Grid.Row="2" ItemsSource="{Binding Account.Transactions}" HorizontalAlignment="Stretch" Margin="2,0,10,0">            
             <ListView.ItemTemplate>
                 <DataTemplate>

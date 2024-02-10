@@ -65,8 +65,8 @@ namespace FinanceTracker.WPF
         private bool _ignoreDelimInQuotes;
         public bool IgnoreDelimInQuotes { get { return _ignoreDelimInQuotes; } set { _ignoreDelimInQuotes = value; Notify(); } }
 
-        private bool _additiveUpdate;
-        public bool AdditiveUpdate { get { return _additiveUpdate; } set { _additiveUpdate = value; Notify(); } }
+        private bool _dataAvailable;
+        public bool DataAvailable { get { return _dataAvailable; } set { _dataAvailable = value; Notify(); } }
 
 
         //Conversion Development Visibility Properties
@@ -269,7 +269,7 @@ namespace FinanceTracker.WPF
 
                     Column = _conversionRuleBalance.Column;
                     ApplyNegation = _conversionRuleBalance.ApplyNegation;
-                    AdditiveUpdate = _conversionRuleBalance.AdditiveUpdate;
+                    DataAvailable = _conversionRuleBalance.DataAvailable;
                     
                     ColumnVisible               = Visibility.Visible;
                     DelimCharVisible            = Visibility.Collapsed;
@@ -321,7 +321,7 @@ namespace FinanceTracker.WPF
                 case ActiveDevelopment.Balance:
                     _conversionRuleBalance.Column = Column;
                     _conversionRuleBalance.ApplyNegation = ApplyNegation;
-                    _conversionRuleBalance.AdditiveUpdate = AdditiveUpdate;
+                    _conversionRuleBalance.DataAvailable = DataAvailable;
                     await SQLiteContext.UpdateConversionRule_Balance(_conversionRuleBalance);
                     break;
                 case ActiveDevelopment.Category:

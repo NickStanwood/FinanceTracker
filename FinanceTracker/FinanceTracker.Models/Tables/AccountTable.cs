@@ -11,7 +11,7 @@ namespace FinanceTracker.Models
     {
         public async Task<AccountModel?> InsertAccount(SQLiteAsyncConnection conn, string accName)
         {
-            AccountModel account = new AccountModel { Name = accName, Id = Guid.NewGuid(), Balance = 0.0, CurrencyType = "CAD" };
+            AccountModel account = new AccountModel { Name = accName, Id = Guid.NewGuid(), CurrencyType = "CAD" };
             int rowCount = await conn.InsertAsync(account);
             if (rowCount > 0)
                 return account;
