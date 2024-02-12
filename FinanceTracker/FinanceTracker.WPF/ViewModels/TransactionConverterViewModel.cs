@@ -11,25 +11,16 @@ namespace FinanceTracker.WPF
 {
     internal class TransactionConverterViewModel : ViewModelBase<AccountModel>
     {
-        private string _rawTransFilePath;
-        public string RawTransFilePath { get { return _rawTransFilePath; } set { _rawTransFilePath = value; Notify(); } }
-        public ObservableCollection<RawTransactionModel> RawTransactions { get; set; } = new ObservableCollection<RawTransactionModel>();
 
         public ObservableCollection<TransactionModel> Transactions { get; set; } = new ObservableCollection<TransactionModel>();
 
         public LamdaCommand ConvertCmd { get; set; }
-        public LamdaCommand BrowseCmd { get; set; }
         public LamdaCommand ViewRulesCmd { get; set; }
         public LamdaCommand SaveCmd { get; set; }
         public TransactionConverterViewModel(AccountModel model) : base(model) { }
         public TransactionConverterViewModel() : base() { }
         protected override void Initialize()
         {
-            BrowseCmd = new LamdaCommand(
-                (obj) => true,
-                (obj) => BrowseForFile()
-            );
-
             ConvertCmd = new LamdaCommand(
                 (obj) => true,
                 async (obj) => await ConvertTransactions()
@@ -56,62 +47,42 @@ namespace FinanceTracker.WPF
             var balanceRule = await SQLiteContext.GetConversionRule_Balance(_m.Id);
 
             Transactions.Clear();
-            foreach (RawTransactionModel trans in RawTransactions)
-            {
-                try
-                {
-                    List<string> splitTrans = splitterRule.Convert(trans.RawTransaction).ToList();
-                    string name = nameRule.Convert(splitTrans);
-                    DateTime date = dateRule.Convert(splitTrans);
-                    double dollarValue = dollarValueRule.Convert(splitTrans);
-                    double? balance = balanceRule.TryConvert(splitTrans);
-                    CategoryModel? category = await categoryRule.TryConvert(splitTrans);
+            //foreach (RawTransactionModel trans in RawTransactions)
+            //{
+            //    try
+            //    {
+            //        List<string> splitTrans = splitterRule.Convert(trans.RawTransaction).ToList();
+            //        string name = nameRule.Convert(splitTrans);
+            //        DateTime date = dateRule.Convert(splitTrans);
+            //        double dollarValue = dollarValueRule.Convert(splitTrans);
+            //        double? balance = balanceRule.TryConvert(splitTrans);
+            //        CategoryModel? category = await categoryRule.TryConvert(splitTrans);
 
-                    TransactionModel tm = new TransactionModel
-                    {
-                        AccountId = _m.Id,
-                        Name = name,
-                        Date = date,
-                        DollarValue = dollarValue,
-                        Balance = balance,
-                        CategoryId = category?.Id,
-                    };
-                    Transactions.Add(tm);
-                }
-                catch (Exception ex)
-                {
-                    continue;
-                }
-            }
+            //        TransactionModel tm = new TransactionModel
+            //        {
+            //            AccountId = _m.Id,
+            //            Name = name,
+            //            Date = date,
+            //            DollarValue = dollarValue,
+            //            Balance = balance,
+            //            CategoryId = category?.Id,
+            //        };
+            //        Transactions.Add(tm);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        continue;
+            //    }
+            //}
 
         }
 
-        private void BrowseForFile()
-        {
-            var dialog = new Microsoft.Win32.OpenFileDialog();
-            bool? result = dialog.ShowDialog();
-
-            if (result == true)
-            {
-                RawTransFilePath = dialog.FileName;
-
-                string fileText = File.ReadAllText(RawTransFilePath);
-                string[] lines = fileText.Split('\n');
-
-                RawTransactions.Clear();
-                foreach (string line in lines)
-                {
-                    RawTransactionModel model = new RawTransactionModel { RawTransaction = line};
-                    RawTransactions.Add(model);
-                }
-            }
-        }
 
         private void ViewConversions()
         {
-            ConverterDeveloperViewModel convVm = new ConverterDeveloperViewModel(RawTransactions.FirstOrDefault()?.RawTransaction, _m);
-            ConverterDeveloperWindow converterWindow = new ConverterDeveloperWindow(convVm);
-            converterWindow.ShowDialog();
+            //ConverterDeveloperViewModel convVm = new ConverterDeveloperViewModel(RawTransactions.FirstOrDefault()?.RawTransaction, _m);
+            //ConverterDeveloperWindow converterWindow = new ConverterDeveloperWindow(convVm);
+            //converterWindow.ShowDialog();
         }
 
         private async Task SaveTransactions()

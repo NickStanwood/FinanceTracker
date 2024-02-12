@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FinanceTracker.WPF"
         mc:Ignorable="d"
         Title="Add Transactions " Height="450" Width="600">
-    <Window.DataContext>
+    <!--<Window.DataContext>
         <local:TransactionConverterViewModel/>
     </Window.DataContext>
     <Grid>
@@ -21,7 +21,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <!-- browse for raw files -->
+        --><!-- browse for raw files --><!--
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Raw Transaction File"/>
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.ColumnDefinitions>
@@ -47,7 +47,7 @@
             <Button Margin="3,20,3,20" Content="Accept" Command="{Binding SaveCmd}"/>
         </StackPanel>
 
-        <!-- converted transactions -->
+        --><!-- converted transactions --><!--
         <TextBlock Grid.Row="0" Grid.Column="2" Text="Converted Transactions"/>
         <ListView Grid.Row="1" Grid.Column="2" Grid.RowSpan="2"
                   ItemsSource="{Binding Transactions}" HorizontalAlignment="Stretch" Margin="2,0,10,0">
@@ -62,5 +62,5 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-    </Grid>
+    </Grid>-->
 </Window>

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using FinanceTracker.Models;
 using FinanceTracker.Core;
 
@@ -23,10 +24,15 @@ namespace FinanceTracker.WPF
         private double _averagePurchaseCost = 0.0;
         public double AveragePurchaseCost { get { return _averagePurchaseCost; } private set { _averagePurchaseCost = value; Notify(); } }
 
+        private string _rawTransFilePath;
+        public string RawTransFilePath { get { return _rawTransFilePath; } set { _rawTransFilePath = value; Notify(); } }
+
         public ObservableCollection<CategoryStats> Categories { get; set; } = new ObservableCollection<CategoryStats>();
         public ObservableCollection<TransactionModel> Transactions { get; set; } = new ObservableCollection<TransactionModel>();
+        public ObservableCollection<ConvertTransactionViewModel> ConvertTransactions { get; set; } = new ObservableCollection<ConvertTransactionViewModel>();
         public LamdaCommand AddTransactions { get; set; }
         public LamdaCommand UpdateBalance { get; set; }
+        public LamdaCommand BrowseCmd { get; set; }
         public AccountViewModel() : base() { }
         public AccountViewModel(AccountModel model) : base(model)
         {
@@ -46,6 +52,11 @@ namespace FinanceTracker.WPF
             UpdateBalance = new LamdaCommand(
                 (obj) => true,
                 (obj) => ShowBalanceDialog()
+            );
+
+            BrowseCmd = new LamdaCommand(
+                (obj) => true,
+                (obj) => BrowseForFile()
             );
 
             Notify(nameof(AccountName));
@@ -95,6 +106,7 @@ namespace FinanceTracker.WPF
             AddRawTransactionWindow transWin = new AddRawTransactionWindow(_m);
             transWin.ShowDialog();
         }
+
         private async void ShowBalanceDialog()
         {
             AddBalanceTransactionWindow addBalanceDialog = new AddBalanceTransactionWindow();
@@ -109,6 +121,38 @@ namespace FinanceTracker.WPF
                     DollarValue = 0.0,
                 };
                 TransactionModel? tm = await SQLiteContext.AddTransaction(trans);
+            }
+        }
+
+        private async void BrowseForFile()
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            bool? result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                RawTransFilePath = dialog.FileName;
+
+                string fileText = File.ReadAllText(RawTransFilePath);
+                string[] lines = fileText.Split('\n');
+
+                var splitterRule = await SQLiteContext.GetConversionRule_Splitter(_m.Id);
+                var nameRule = await SQLiteContext.GetConversionRule_Name(_m.Id);
+                var dateRule = await SQLiteContext.GetConversionRule_Date(_m.Id);
+                var dollarValueRule = await SQLiteContext.GetConversionRule_DollarValue(_m.Id);
+                var categoryRule = await SQLiteContext.GetConversionRule_Category(_m.Id);
+                var balanceRule = await SQLiteContext.GetConversionRule_Balance(_m.Id);
+
+                ConvertTransactions.Clear();
+                foreach (string line in lines)
+                {
+                    if (line == "")
+                        continue;
+
+                    ConvertTransactionViewModel ct = new ConvertTransactionViewModel(_m, line);
+                    await ct.ConvertTransaction(splitterRule, nameRule, dateRule, dollarValueRule, balanceRule, categoryRule);
+                    ConvertTransactions.Add(ct);
+                }
             }
         }
 

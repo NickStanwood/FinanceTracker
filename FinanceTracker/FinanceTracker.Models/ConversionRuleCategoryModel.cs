@@ -16,7 +16,7 @@ namespace FinanceTracker.Models
         public bool UseAdvanced { get; set; }
         public string AdvancedScript { get; set; }
 
-        public async Task<CategoryModel> Convert(List<string> splitTrans)
+        public async Task<CategoryModel?> Convert(List<string> splitTrans)
         {
             if (UseAdvanced)
                 throw new NotImplementedException();
@@ -34,18 +34,7 @@ namespace FinanceTracker.Models
                 }
             }
 
-            throw new FormatException();
-        }
-        public async Task<CategoryModel?> TryConvert(List<string> splitTrans)
-        {
-            try
-            {
-                return await Convert(splitTrans);
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+            return null;
         }
     }
 }

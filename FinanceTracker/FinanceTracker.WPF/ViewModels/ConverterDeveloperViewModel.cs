@@ -136,68 +136,68 @@ namespace FinanceTracker.WPF
 
         private async Task Convert()
         {
-            Output = "";
-            try
-            {
+            //Output = "";
+            //try
+            //{
 
-                SplitTransaction.Clear(); 
-                string[] splitTrans = _conversionRuleSplitter.Convert(RawTransaction);
-                foreach (string split in splitTrans)
-                {
-                    SplitTransaction.Add(split);
-                }
+            //    SplitTransaction.Clear(); 
+            //    string[] splitTrans = _conversionRuleSplitter.Convert(RawTransaction);
+            //    foreach (string split in splitTrans)
+            //    {
+            //        SplitTransaction.Add(split);
+            //    }
 
-            }
-            catch (Exception ex)
-            {
-                Output += "[Split] " + ex.Message + "\n";
-                return;
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Output += "[Split] " + ex.Message + "\n";
+            //    return;
+            //}
 
-            try
-            {               
-                Name = _conversionRuleName.Convert(SplitTransaction.ToList());
-            }
-            catch (Exception ex)
-            {
-                Output += "[ Name     ] " + ex.Message + "\n";
-            }
+            //try
+            //{               
+            //    Name = _conversionRuleName.Convert(SplitTransaction.ToList());
+            //}
+            //catch (Exception ex)
+            //{
+            //    Output += "[ Name     ] " + ex.Message + "\n";
+            //}
 
-            try
-            {
-                Date = _conversionRuleDate.Convert(SplitTransaction.ToList());
-            }
-            catch (Exception ex)
-            {
-                Output += "[ Date     ] " + ex.Message + "\n";
-            }
+            //try
+            //{
+            //    Date = _conversionRuleDate.Convert(SplitTransaction.ToList());
+            //}
+            //catch (Exception ex)
+            //{
+            //    Output += "[ Date     ] " + ex.Message + "\n";
+            //}
 
-            try
-            {
-                DollarValue = _conversionRuleValue.Convert(SplitTransaction.ToList());
-            }
-            catch (Exception ex)
-            {
-                Output += "[ Value    ] " + ex.Message + "\n";
-            }
+            //try
+            //{
+            //    DollarValue = _conversionRuleValue.Convert(SplitTransaction.ToList());
+            //}
+            //catch (Exception ex)
+            //{
+            //    Output += "[ Value    ] " + ex.Message + "\n";
+            //}
 
-            try
-            {
-                Balance = _conversionRuleBalance.Convert(SplitTransaction.ToList());
-            }
-            catch (Exception ex)
-            {
-                Output += "[ Balance  ] " + ex.Message + "\n";
-            }
+            //try
+            //{
+            //    Balance = _conversionRuleBalance.Convert(SplitTransaction.ToList());
+            //}
+            //catch (Exception ex)
+            //{
+            //    Output += "[ Balance  ] " + ex.Message + "\n";
+            //}
 
-            try
-            {
-                Category = await _conversionRuleCategory.Convert(SplitTransaction.ToList());
-            }
-            catch (Exception ex)
-            {
-                Output += "[ Category ] " + ex.Message + "\n";
-            }
+            //try
+            //{
+            //    Category = await _conversionRuleCategory.Convert(SplitTransaction.ToList());
+            //}
+            //catch (Exception ex)
+            //{
+            //    Output += "[ Category ] " + ex.Message + "\n";
+            //}
         }
 
         private void ViewDevelopment(object? parameter)

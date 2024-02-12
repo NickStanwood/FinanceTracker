@@ -16,10 +16,10 @@ namespace FinanceTracker.Models
 
         public bool UseAdvanced { get; set; }
         public string AdvancedScript { get; set; }
-        public double Convert(List<string> splitTrans)
+        public double? Convert(List<string> splitTrans)
         {
             if (!DataAvailable)
-                throw new NotImplementedException();
+                return null;
 
             if (UseAdvanced)
                 throw new NotImplementedException();
@@ -33,20 +33,6 @@ namespace FinanceTracker.Models
             
             if (ApplyNegation)
                 val *= -1;
-
-            return val;
-        }
-        public double? TryConvert(List<string> splitTrans)
-        {
-            double val;
-            try
-            {
-                val = Convert(splitTrans);
-            }
-            catch
-            {
-                return null;
-            }
 
             return val;
         }
