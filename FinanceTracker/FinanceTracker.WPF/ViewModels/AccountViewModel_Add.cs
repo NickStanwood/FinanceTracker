@@ -18,13 +18,59 @@ namespace FinanceTracker.WPF
         public ObservableCollection<ConvertTransactionViewModel> ConvertTransactions { get; set; } = new ObservableCollection<ConvertTransactionViewModel>();
         public LamdaCommand BrowseCmd { get; set; }
 
-        private void Initialize_Add()
-        {
 
+        //spliter rule 
+        public string SplitterRule_DelimChar { get { return splitterRule_ != null ? splitterRule_.DelimChar : ""; } set { splitterRule_.DelimChar = value; Notify(); } }
+        public bool SplitterRule_IgnoreDelimInQuotes { get { return splitterRule_ != null ? splitterRule_.IgnoreDelimInQuotes : false; } set { splitterRule_.IgnoreDelimInQuotes = value; Notify(); } }
+
+        //Name Rule
+        public int NameRule_Column { get { return nameRule_ != null ? nameRule_.Column : 0; } set { nameRule_.Column = value; Notify(); } }
+
+        //Date Rule
+        public int DateRule_Column { get { return dateRule_ != null ? dateRule_.Column : 0; } set { dateRule_.Column = value; Notify(); } }
+        public string DateRule_DateFormat { get { return dateRule_ != null ? dateRule_.DateFormat : ""; } set { dateRule_.DateFormat = value; Notify(); } }
+
+        //Dollar Value Rule
+        public int DollarValueRule_Column { get { return dollarValueRule_ != null ? dollarValueRule_.Column : 0; } set { dollarValueRule_.Column = value; Notify(); } }
+        public bool DollarValueRule_ApplyNegation { get { return dollarValueRule_ != null ? dollarValueRule_.ApplyNegation : false; } set { dollarValueRule_.ApplyNegation = value; Notify(); } }
+
+
+        //Balance Rule
+        public int BalanceRule_Column { get { return balanceRule_ != null ? balanceRule_.Column : 0; } set { balanceRule_.Column = value; Notify(); } }
+        public bool BalanceRule_ApplyNegation { get { return balanceRule_ != null ? balanceRule_.ApplyNegation : false; } set { balanceRule_.ApplyNegation = value; Notify(); } }
+        public bool BalanceRule_DataAvailable { get { return balanceRule_ != null ? balanceRule_.DataAvailable : false; } set { balanceRule_.DataAvailable = value; Notify(); } }
+
+        //conversion rules
+        private ConversionRuleSplitterModel splitterRule_;
+        private ConversionRuleNameModel nameRule_;
+        private ConversionRuleDateModel dateRule_;
+        private ConversionRuleDollarValueModel dollarValueRule_;
+        private ConversionRuleBalanceModel balanceRule_;
+        private ConversionRuleCategoryModel categoryRule_;
+
+        private async void Initialize_Add()
+        {
             BrowseCmd = new LamdaCommand(
                 (obj) => true,
                 (obj) => BrowseForFile()
             );
+
+            splitterRule_ = await SQLiteContext.GetConversionRule_Splitter(_m.Id);
+            nameRule_ = await SQLiteContext.GetConversionRule_Name(_m.Id);
+            dateRule_ = await SQLiteContext.GetConversionRule_Date(_m.Id);
+            dollarValueRule_ = await SQLiteContext.GetConversionRule_DollarValue(_m.Id);
+            balanceRule_ = await SQLiteContext.GetConversionRule_Balance(_m.Id);
+            categoryRule_ = await SQLiteContext.GetConversionRule_Category(_m.Id);
+            Notify(nameof(SplitterRule_DelimChar));
+            Notify(nameof(SplitterRule_IgnoreDelimInQuotes));
+            Notify(nameof(NameRule_Column));
+            Notify(nameof(DateRule_Column));
+            Notify(nameof(DateRule_DateFormat));
+            Notify(nameof(DollarValueRule_Column));
+            Notify(nameof(DollarValueRule_ApplyNegation));
+            Notify(nameof(BalanceRule_Column));
+            Notify(nameof(BalanceRule_ApplyNegation));
+            Notify(nameof(BalanceRule_DataAvailable));
         }
 
         private async void BrowseForFile()
@@ -39,12 +85,6 @@ namespace FinanceTracker.WPF
                 string fileText = File.ReadAllText(RawTransFilePath);
                 string[] lines = fileText.Split('\n');
 
-                var splitterRule = await SQLiteContext.GetConversionRule_Splitter(_m.Id);
-                var nameRule = await SQLiteContext.GetConversionRule_Name(_m.Id);
-                var dateRule = await SQLiteContext.GetConversionRule_Date(_m.Id);
-                var dollarValueRule = await SQLiteContext.GetConversionRule_DollarValue(_m.Id);
-                var categoryRule = await SQLiteContext.GetConversionRule_Category(_m.Id);
-                var balanceRule = await SQLiteContext.GetConversionRule_Balance(_m.Id);
 
                 ConvertTransactions.Clear();
                 foreach (string line in lines)
@@ -53,7 +93,7 @@ namespace FinanceTracker.WPF
                         continue;
 
                     ConvertTransactionViewModel ct = new ConvertTransactionViewModel(_m, line);
-                    await ct.ConvertTransaction(splitterRule, nameRule, dateRule, dollarValueRule, balanceRule, categoryRule);
+                    await ct.ConvertTransaction(splitterRule_, nameRule_, dateRule_, dollarValueRule_, balanceRule_, categoryRule_);
                     ConvertTransactions.Add(ct);
                 }
             }
