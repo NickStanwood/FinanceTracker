@@ -79,8 +79,8 @@ namespace FinanceTracker.WPF
             } 
         }
 
-        public ObservableCollection<string> ConversionErrors = new ObservableCollection<string>();
-
+        public ObservableCollection<string> ConversionErrors { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<Tuple<int, string>> SplitTransactionColumns { get; set; } = new ObservableCollection<Tuple<int, string>>();
         private RawTransactionModel _rawTrans { get; set; }
         private TransactionModel? _convertedTrans { get; set; }
 
@@ -116,6 +116,10 @@ namespace FinanceTracker.WPF
             try
             {
                 splitTrans = splitterRule.Convert(RawTransaction).ToList();
+
+                SplitTransactionColumns.Clear();
+                for (int i = 0; i < splitTrans.Count; i++)
+                    SplitTransactionColumns.Add(new Tuple<int, string>(i, splitTrans[i]));
             }
             catch (Exception ex)
             {

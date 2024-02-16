@@ -74,12 +74,15 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" Text="{Binding Path=Account.RawTransFilePath}"/>
-                        <Button Grid.Column="1" Content="Browse" Command="{Binding Path=Account.BrowseCmd}"/>
+                        <TextBox Grid.Column="0" Margin="3" Text="{Binding Path=Account.RawTransFilePath}"/>
+                        <Button Grid.Column="1" Content="Browse" Margin="3" Command="{Binding Path=Account.BrowseCmd}"/>
+                        <Button Grid.Column="2" Content="Refresh" Margin="3" Command="{Binding Path=Account.BrowseCmd}"/>
                     </Grid>
                     <DataGrid Grid.Row="2" Grid.Column="0" 
-                              ItemsSource="{Binding Path=Account.ConvertTransactions}" AutoGenerateColumns="False" GridLinesVisibility="None">
+                              ItemsSource="{Binding Path=Account.ConvertTransactions}" SelectedItem="{Binding Path=Account.SelectedConvertedTransaction}"
+                              AutoGenerateColumns="False" GridLinesVisibility="None">
                         <DataGrid.Columns>
                             <DataGridTextColumn Width="100" Header="Raw Transaction" Binding="{Binding RawTransaction}"/>
                             <DataGridTextColumn Width="100" Header="Date" Binding="{Binding ConvDate}"/>
@@ -90,6 +93,26 @@
                     </DataGrid>
                     <GridSplitter Grid.Column="1" Grid.RowSpan="3" Background="Green" Width="5" ResizeBehavior="PreviousAndNext"/>
                     <StackPanel Grid.RowSpan="3" Grid.Column="2">
+                        <TextBlock Text="Split Transaction" HorizontalAlignment="Stretch" Background="LightGray"/>
+                        <ListView ItemsSource="{Binding Account.SelectedConvertedTransaction.SplitTransactionColumns}">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Text="{Binding Path=Item1}" HorizontalAlignment="Stretch" TextAlignment="Center" Padding="3,0,3,0" FontWeight="Bold"/>
+                                        <TextBlock Grid.Row="1" Text="{Binding Path=Item2}" HorizontalAlignment="Stretch" TextAlignment="Center" MinWidth="32" Padding="3,0,3,0" Height="20"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>                            
+                        </ListView> 
                         <TextBlock Text="Splitter Conversion Rules" HorizontalAlignment="Stretch" Background="LightGray"/>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Delimeter Character" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>

@@ -16,8 +16,10 @@ namespace FinanceTracker.WPF
         private string _rawTransFilePath;
         public string RawTransFilePath { get { return _rawTransFilePath; } set { _rawTransFilePath = value; Notify(); } }
         public ObservableCollection<ConvertTransactionViewModel> ConvertTransactions { get; set; } = new ObservableCollection<ConvertTransactionViewModel>();
+        private ConvertTransactionViewModel _selecectedConvertedTransaction;
+        public ConvertTransactionViewModel SelectedConvertedTransaction { get { return _selecectedConvertedTransaction; } set { _selecectedConvertedTransaction = value; Notify(); } }
         public LamdaCommand BrowseCmd { get; set; }
-
+        public LamdaCommand RefreshCmd { get; set; }
 
         //spliter rule 
         public string SplitterRule_DelimChar { get { return splitterRule_ != null ? splitterRule_.DelimChar : ""; } set { splitterRule_.DelimChar = value; Notify(); } }
@@ -55,6 +57,11 @@ namespace FinanceTracker.WPF
                 (obj) => BrowseForFile()
             );
 
+            RefreshCmd = new LamdaCommand(
+                (obj) => true,
+                (obj) => ConvertRawTransactions()
+            );
+
             splitterRule_ = await SQLiteContext.GetConversionRule_Splitter(_m.Id);
             nameRule_ = await SQLiteContext.GetConversionRule_Name(_m.Id);
             dateRule_ = await SQLiteContext.GetConversionRule_Date(_m.Id);
@@ -73,7 +80,7 @@ namespace FinanceTracker.WPF
             Notify(nameof(BalanceRule_DataAvailable));
         }
 
-        private async void BrowseForFile()
+        private async Task BrowseForFile()
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
             bool? result = dialog.ShowDialog();
@@ -82,20 +89,24 @@ namespace FinanceTracker.WPF
             {
                 RawTransFilePath = dialog.FileName;
 
-                string fileText = File.ReadAllText(RawTransFilePath);
-                string[] lines = fileText.Split('\n');
+                await ConvertRawTransactions();
+            }
+        }
 
+        private async Task ConvertRawTransactions()
+        {
+            string fileText = File.ReadAllText(RawTransFilePath);
+            string[] lines = fileText.Split('\n');
 
-                ConvertTransactions.Clear();
-                foreach (string line in lines)
-                {
-                    if (line == "")
-                        continue;
+            ConvertTransactions.Clear();
+            foreach (string line in lines)
+            {
+                if (line == "")
+                    continue;
 
-                    ConvertTransactionViewModel ct = new ConvertTransactionViewModel(_m, line);
-                    await ct.ConvertTransaction(splitterRule_, nameRule_, dateRule_, dollarValueRule_, balanceRule_, categoryRule_);
-                    ConvertTransactions.Add(ct);
-                }
+                ConvertTransactionViewModel ct = new ConvertTransactionViewModel(_m, line);
+                await ct.ConvertTransaction(splitterRule_, nameRule_, dateRule_, dollarValueRule_, balanceRule_, categoryRule_);
+                ConvertTransactions.Add(ct);
             }
         }
     }
