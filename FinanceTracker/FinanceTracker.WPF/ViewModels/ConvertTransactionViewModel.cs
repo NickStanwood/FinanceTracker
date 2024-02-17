@@ -83,6 +83,7 @@ namespace FinanceTracker.WPF
         public ObservableCollection<Tuple<int, string>> SplitTransactionColumns { get; set; } = new ObservableCollection<Tuple<int, string>>();
         private RawTransactionModel _rawTrans { get; set; }
         private TransactionModel? _convertedTrans { get; set; }
+        public TransactionModel? ConvertedTrans { get { return _convertedTrans; } }
 
 
 
@@ -181,6 +182,9 @@ namespace FinanceTracker.WPF
                 Balance = balance,
                 CategoryId = category?.Id,
             };
+
+            if (ConversionErrors.Count == 0)
+                ConversionErrors.Add("== Converted Successfully ==");
         }
     }
 }

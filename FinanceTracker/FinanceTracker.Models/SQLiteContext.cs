@@ -65,6 +65,11 @@ namespace FinanceTracker.Models
             await Initialize();
             return await _transactionTable.InsertTransaction(_conn, transaction);
         }
+        public async static Task<int> AddTransactions(List<TransactionModel> transactions)
+        {
+            await Initialize();
+            return await _transactionTable.InsertTransactions(_conn, transactions);
+        }
 
         public async static Task<List<TransactionModel>> GetAllAccountTransactionsAsync(Guid accId)
         {

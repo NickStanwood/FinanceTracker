@@ -20,6 +20,7 @@ namespace FinanceTracker.WPF
         public ConvertTransactionViewModel SelectedConvertedTransaction { get { return _selecectedConvertedTransaction; } set { _selecectedConvertedTransaction = value; Notify(); } }
         public LamdaCommand BrowseCmd { get; set; }
         public LamdaCommand RefreshCmd { get; set; }
+        public LamdaCommand SaveCmd { get; set; }
 
         //spliter rule 
         public string SplitterRule_DelimChar { get { return splitterRule_ != null ? splitterRule_.DelimChar : ""; } set { splitterRule_.DelimChar = value; Notify(); } }
@@ -60,6 +61,11 @@ namespace FinanceTracker.WPF
             RefreshCmd = new LamdaCommand(
                 (obj) => true,
                 (obj) => ConvertRawTransactions()
+            );
+
+            SaveCmd = new LamdaCommand(
+                (obj) => true,
+                (obj) => SaveConvertedTransactions()
             );
 
             splitterRule_ = await SQLiteContext.GetConversionRule_Splitter(_m.Id);
@@ -108,6 +114,27 @@ namespace FinanceTracker.WPF
                 await ct.ConvertTransaction(splitterRule_, nameRule_, dateRule_, dollarValueRule_, balanceRule_, categoryRule_);
                 ConvertTransactions.Add(ct);
             }
+        }
+
+        private async Task SaveConvertedTransactions()
+        {
+            await SQLiteContext.UpdateConversionRule_Splitter(splitterRule_);
+            await SQLiteContext.UpdateConversionRule_Name(nameRule_);
+            await SQLiteContext.UpdateConversionRule_Date(dateRule_);
+            await SQLiteContext.UpdateConversionRule_DollarValue(dollarValueRule_);
+            await SQLiteContext.UpdateConversionRule_Balance(balanceRule_);
+            await SQLiteContext.UpdateConversionRule_Category(categoryRule_);
+
+            List<TransactionModel> convTrans = new List<TransactionModel>();
+            foreach(ConvertTransactionViewModel ct in ConvertTransactions)
+            {
+                if(ct.ConvertedTrans != null)
+                    convTrans.Add(ct.ConvertedTrans);
+            }
+
+            await SQLiteContext.AddTransactions(convTrans);
+
+            ConvertTransactions.Clear();
         }
     }
 }

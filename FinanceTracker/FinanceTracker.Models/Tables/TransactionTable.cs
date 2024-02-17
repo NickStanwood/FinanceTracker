@@ -6,22 +6,15 @@ namespace FinanceTracker.Models
     {
         public async Task<TransactionModel?> InsertTransaction(SQLiteAsyncConnection conn, TransactionModel tm)
         {
-            TransactionModel duplicate = await conn.Table<TransactionModel>()
-                .Where(o => 
-                    o.AccountId == tm.AccountId
-                    && o.DollarValue == tm.DollarValue
-                    && o.Balance == tm.Balance
-                    && o.Date == tm.Date
-                    && o.Name == tm.Name).FirstOrDefaultAsync();
-
-            //this transaction already exists in the database
-            if(duplicate != null)
-                return duplicate;
-
             int rowCount = await conn.InsertAsync(tm);
             if (rowCount > 0)
                 return tm;
             return null;
+        }
+        public async Task<int> InsertTransactions(SQLiteAsyncConnection conn, List<TransactionModel> tml)
+        {
+            int rowCount = await conn.InsertAllAsync(tml);
+            return rowCount;
         }
         public async Task<TransactionModel> SelectBalanceTransaction(SQLiteAsyncConnection conn, Guid accId)
         {
