@@ -7,45 +7,172 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{Binding Account.AccountName}" 
+                   FontWeight="Bold" FontSize="20" HorizontalAlignment="Stretch" 
+                   Background="Green" TextAlignment="Center"/>
+        <TabControl Grid.Row="1">
+            <!-- Account Summary Tab -->
+            <TabItem Header="Account Summary">
+                <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" 
-                   Text="{Binding Account.AccountName}" 
-                   FontWeight="Bold" FontSize="20" HorizontalAlignment="Stretch" Background="SeaGreen" TextAlignment="Center"/>
-
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="Add Transactions" Margin="2,3,10,3" Command="{Binding Account.AddTransactions}"/>
-            <Button Content="Update Balance" Margin="2,3,10,3" Command="{Binding Account.UpdateBalance}"/>
-        </StackPanel>
-        <ListView Grid.Row="2" ItemsSource="{Binding Account.Transactions}" HorizontalAlignment="Stretch" Margin="2,0,10,0">            
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Margin="5,2,5,2">
-                        <TextBlock Text="{Binding Path=Date, StringFormat=dd-MMM-yyyy}" Margin="0,0,10,0" MinWidth="50"/>
-                        <TextBlock Text="{Binding Path=DollarValue, StringFormat={}$  {0:#,#.00}}" Margin="0,0,10,0" MinWidth="50"/>
-                        <TextBlock Text="{Binding Category}" Margin="0,0,10,0" MinWidth="50"/>
-                        <TextBlock Text="{Binding Name}"  MinWidth="50"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-        <StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch">
-            <TextBlock  Text="{Binding Path=Account.Balance, StringFormat={}$  {0:#,#.00}}" 
+                    <Button Grid.Row="0" Content="Update Balance" Margin="2,3,10,3" Command="{Binding Account.UpdateBalance}"/>
+                    
+                    <ListView Grid.Row="1" ItemsSource="{Binding Account.Transactions}" HorizontalAlignment="Stretch" Margin="2,0,10,0">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="5,2,5,2">
+                                    <TextBlock Text="{Binding Path=Date, StringFormat=dd-MMM-yyyy}" Margin="0,0,10,0" MinWidth="50"/>
+                                    <TextBlock Text="{Binding Path=DollarValue, StringFormat={}$  {0:#,#.00}}" Margin="0,0,10,0" MinWidth="50"/>
+                                    <TextBlock Text="{Binding Category}" Margin="0,0,10,0" MinWidth="50"/>
+                                    <TextBlock Text="{Binding Name}"  MinWidth="50"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch">
+                        <TextBlock  Text="{Binding Path=Account.Balance, StringFormat={}$  {0:#,#.00}}" 
                    FontWeight="Bold" FontSize="50"/>
-            <TextBlock Grid.Row="1" Grid.Column="1" 
+                        <TextBlock Grid.Row="1" Grid.Column="1" 
                    Text="{Binding Path=Account.TransactionFrequency, StringFormat={}{0:#,#.00} Transactions per day}" 
                    FontSize="20" Margin="5"/>
-            <TextBlock Grid.Row="1" Grid.Column="1" 
+                        <TextBlock Grid.Row="1" Grid.Column="1" 
                    Text="{Binding Path=Account.AveragePurchaseCost, StringFormat={}Avg $ {0:#,#.00} per transaction}" 
                    FontSize="20" Margin="5"/>
-        </StackPanel>        
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            
+            <!-- Add Transaction Tab -->
+            <TabItem Header="Add Transactions">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- browse for raw files -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Raw Transaction File" HorizontalAlignment="Stretch"/>
+                    <Grid Grid.Row="1" Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Margin="3" Text="{Binding Path=Account.RawTransFilePath}"/>
+                        <Button Grid.Column="1" Content="Browse" Margin="3" Command="{Binding Path=Account.BrowseCmd}"/>
+                        <Button Grid.Column="2" Content="Refresh" Margin="3" Command="{Binding Path=Account.RefreshCmd}"/>
+                    </Grid>
+                    <DataGrid Grid.Row="2" Grid.Column="0" 
+                              ItemsSource="{Binding Path=Account.ConvertTransactions}" SelectedItem="{Binding Path=Account.SelectedConvertedTransaction}"
+                              AutoGenerateColumns="False" GridLinesVisibility="None">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="*" Header="Raw Transaction" Binding="{Binding RawTransaction}"/>
+                            <DataGridTextColumn Width="100" Header="Date" Binding="{Binding ConvDate}"/>
+                            <DataGridTextColumn Width="100" Header="Name" Binding="{Binding ConvName}"/>
+                            <DataGridTextColumn Width="100" Header="Dollar Value" Binding="{Binding ConvDollarValue}"/>
+                            <DataGridTextColumn Width="100" Header="Balance" Binding="{Binding ConvBalance}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Grid.Row="3" Grid.Column="0" Content="Save Converted transactions" Margin="5" Command="{Binding Account.SaveCmd}"/>
+                    <GridSplitter Grid.Column="1" Grid.RowSpan="4" Background="Green" Width="5" ResizeBehavior="PreviousAndNext"/>
+                    <StackPanel Grid.RowSpan="4" Grid.Column="2">
+                        <TextBlock Text="Split Transaction" HorizontalAlignment="Stretch" Background="LightGray" Margin="0,10,0,0"/>
+                        <ListView ItemsSource="{Binding Account.SelectedConvertedTransaction.SplitTransactionColumns}">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Text="{Binding Path=Item1}" HorizontalAlignment="Stretch" TextAlignment="Center" Padding="3,0,3,0" FontWeight="Bold" Background="LightGray"/>
+                                        <TextBlock Grid.Row="1" Text="{Binding Path=Item2}" HorizontalAlignment="Stretch" TextAlignment="Center" MinWidth="32" Padding="3,0,3,0" Height="20"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>                            
+                        </ListView>
+                        <TextBlock Text="Conversion Output"/>
+                        <ListView ItemsSource="{Binding Account.SelectedConvertedTransaction.ConversionErrors}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=.}" FontFamily="Consolas"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <TextBlock Text="Splitter Conversion Rules" HorizontalAlignment="Stretch" Background="LightGray" Margin="0,10,0,0"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Delimeter Character" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>
+                            <TextBox Text="{Binding Account.SplitterRule_DelimChar}" Width="100"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Ignore Delimeter in Quotes" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>
+                            <CheckBox IsChecked="{Binding Account.SplitterRule_IgnoreDelimInQuotes}"/>
+                        </StackPanel>
+                        <TextBlock Text="Name Conversion Rules" HorizontalAlignment="Stretch" Background="LightGray" Margin="0,10,0,0"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Column" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>
+                            <TextBox Text="{Binding Account.NameRule_Column}" Width="100"/>
+                        </StackPanel>
+                        <TextBlock Text="Date Conversion Rules" HorizontalAlignment="Stretch" Background="LightGray" Margin="0,10,0,0"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Column" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>
+                            <TextBox Text="{Binding Account.DateRule_Column}" Width="100"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Date Format" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>
+                            <TextBox Text="{Binding Account.DateRule_DateFormat}" Width="100"/>
+                        </StackPanel>
+                        <TextBlock Text="Dollar Value Conversion Rules" HorizontalAlignment="Stretch" Background="LightGray" Margin="0,10,0,0"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Column" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>
+                            <TextBox Text="{Binding Account.DollarValueRule_Column}" Width="100"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Apply Negation" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>
+                            <CheckBox IsChecked="{Binding Account.DollarValueRule_ApplyNegation}"/>
+                        </StackPanel>
+                        <TextBlock Text="Balance Conversion Rules" HorizontalAlignment="Stretch" Background="LightGray" Margin="0,10,0,0"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Column" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>
+                            <TextBox Text="{Binding Account.BalanceRule_Column}" Width="100"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Has balance data" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>
+                            <CheckBox IsChecked="{Binding Account.BalanceRule_DataAvailable}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Apply Negation" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>
+                            <CheckBox IsChecked="{Binding Account.BalanceRule_ApplyNegation}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
+    
+    
 </UserControl>

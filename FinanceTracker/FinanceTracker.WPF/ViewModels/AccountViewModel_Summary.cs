@@ -4,12 +4,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using FinanceTracker.Models;
 using FinanceTracker.Core;
 
 namespace FinanceTracker.WPF
 {
-    public class AccountViewModel : ViewModelBase<AccountModel>
+    //summary tab of accountViewModel
+    public partial class AccountViewModel : ViewModelBase<AccountModel>
     {
         public string AccountName { get { return _m.Name; } }
         public string CurrencyType { get { return _m.CurrencyType; } }
@@ -25,23 +27,17 @@ namespace FinanceTracker.WPF
 
         public ObservableCollection<CategoryStats> Categories { get; set; } = new ObservableCollection<CategoryStats>();
         public ObservableCollection<TransactionModel> Transactions { get; set; } = new ObservableCollection<TransactionModel>();
-        public LamdaCommand AddTransactions { get; set; }
         public LamdaCommand UpdateBalance { get; set; }
         public AccountViewModel() : base() { }
         public AccountViewModel(AccountModel model) : base(model)
         {
+            Initialize_Add();
         }
 
         protected override async void Initialize()
         {
             if (_m.Id == Guid.Empty)
                 return;
-
-            //setup commands
-            AddTransactions = new LamdaCommand(
-                (obj) => true,
-                (obj) => ShowTransactionsDialog()
-            );
 
             UpdateBalance = new LamdaCommand(
                 (obj) => true,
@@ -90,11 +86,6 @@ namespace FinanceTracker.WPF
             }
         }
 
-        private void ShowTransactionsDialog()
-        {
-            AddRawTransactionWindow transWin = new AddRawTransactionWindow(_m);
-            transWin.ShowDialog();
-        }
         private async void ShowBalanceDialog()
         {
             AddBalanceTransactionWindow addBalanceDialog = new AddBalanceTransactionWindow();
@@ -111,6 +102,5 @@ namespace FinanceTracker.WPF
                 TransactionModel? tm = await SQLiteContext.AddTransaction(trans);
             }
         }
-
     }
 }
