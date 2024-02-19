@@ -10,6 +10,16 @@ using FinanceTracker.Models;
 
 namespace FinanceTracker.WPF
 {
+    public enum MainWindowViewState
+    {
+        None,
+        Goals,
+        Budget,
+        NetWorth,
+        Account,
+        Categories,
+    }
+
     internal class AccountNavigationViewModel : NavigationViewModel
     {
         public ObservableCollection<AccountModel> AccountList { get; set; } = new ObservableCollection<AccountModel>();
@@ -18,5 +28,6 @@ namespace FinanceTracker.WPF
     internal class NavigationViewModel
     {
         public string Name { get; set; }
+        public MainWindowViewState ViewState { get; set; }
     }
 }

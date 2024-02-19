@@ -22,39 +22,56 @@ namespace FinanceTracker.Models
         private static ConversionRuleCategoryTable _conversionRuleCategoryTable = new ConversionRuleCategoryTable();
         private static ConversionRuleDollarValueTable _conversionRuleDollarValueTable = new ConversionRuleDollarValueTable();
         private static ConversionRuleBalanceTable _conversionRuleBalanceTable = new ConversionRuleBalanceTable();
-        private static async Task Initialize()
+
+        private static object _locker = new object();
+        private static void Initialize()
         {
             if (_conn != null)
                 return;
 
-            string connStr = ConfigurationManager.AppSettings["dbPath"];
-            _conn = new SQLiteAsyncConnection(connStr);
-            await _conn.CreateTableAsync<AccountModel>();
-            await _conn.CreateTableAsync<TransactionModel>();
-            await _conn.CreateTableAsync<ConversionRuleNameModel>();
-            await _conn.CreateTableAsync<ConversionRuleDateModel>();
-            await _conn.CreateTableAsync<ConversionRuleCategoryModel>();
-            await _conn.CreateTableAsync<ConversionRuleDollarValueModel>();
-            await _conn.CreateTableAsync<ConversionRuleBalanceModel>();
-            await _conn.CreateTableAsync<ConversionRuleSplitterModel>();
-            await _conn.CreateTableAsync<CategoryModel>();
-            await _conn.CreateTableAsync<CategoryRegexModel>();
+            lock(_locker)
+            {
+                if (_conn != null)
+                    return;
+
+                string connStr = ConfigurationManager.AppSettings["dbPath"];
+                SQLiteAsyncConnection conn = new SQLiteAsyncConnection(connStr);
+                conn.CreateTableAsync<AccountModel>().Wait();
+                conn.CreateTableAsync<TransactionModel>().Wait();
+                conn.CreateTableAsync<ConversionRuleNameModel>().Wait();
+                conn.CreateTableAsync<ConversionRuleDateModel>().Wait();
+                conn.CreateTableAsync<ConversionRuleCategoryModel>().Wait();
+                conn.CreateTableAsync<ConversionRuleDollarValueModel>().Wait();
+                conn.CreateTableAsync<ConversionRuleBalanceModel>().Wait();
+                conn.CreateTableAsync<ConversionRuleSplitterModel>().Wait();
+                conn.CreateTableAsync<CategoryModel>().Wait();
+                conn.CreateTableAsync<CategoryRegexModel>().Wait();
+                _conn = conn;
+
+                List<CategoryModel> categories = GetAllCategories().Result;
+                if (categories.Count == 0)
+                {
+                    AddCategory(null, "Income").Wait();
+                    AddCategory(null, "Expense").Wait();
+                }
+            }
+                      
         }
 
         #region Account Table
         public async static Task<List<AccountModel>> GetAllAccountsAsync()
         {
-            await Initialize();
+            Initialize();
             return await _accountTable.SelectAll(_conn);
         }
         public async static Task<AccountModel?> AddAccount(string accName)
         {
-            await Initialize();
+            Initialize();
             return await _accountTable.InsertAccount(_conn, accName);
         }
         public async static Task UpdateAccount(AccountModel acc)
         {
-            await Initialize();
+            Initialize();
             await _accountTable.UpdateAccount(_conn, acc);
         }
         #endregion
@@ -62,29 +79,29 @@ namespace FinanceTracker.Models
         #region Transaction Table
         public async static Task<TransactionModel?> AddTransaction(TransactionModel transaction)
         {
-            await Initialize();
+            Initialize();
             return await _transactionTable.InsertTransaction(_conn, transaction);
         }
         public async static Task<int> AddTransactions(List<TransactionModel> transactions)
         {
-            await Initialize();
+            Initialize();
             return await _transactionTable.InsertTransactions(_conn, transactions);
         }
 
         public async static Task<List<TransactionModel>> GetAllAccountTransactionsAsync(Guid accId)
         {
-            await Initialize();
+            Initialize();
             return await _transactionTable.SelectAccountTransactions(_conn, accId);
         }
 
         public async static Task<List<TransactionModel>> GetAllAccountTransactionsAsync(Guid accId, DateTime since)
         {
-            await Initialize();
+            Initialize();
             return await _transactionTable.SelectTransactions(_conn, accId, since);
         }
         public async static Task<TransactionModel> GetAccountBalanceAsync(Guid accId)
         {
-            await Initialize();
+            Initialize();
             return await _transactionTable.SelectBalanceTransaction(_conn, accId);
         }
         #endregion
@@ -92,19 +109,35 @@ namespace FinanceTracker.Models
         #region Category Table
         public async static Task<CategoryModel> GetCategory(Guid categoryId)
         {
-            await Initialize();
+            Initialize();
             return await _categoryTable.Select(_conn, categoryId);
         }
 
         public async static Task<List<CategoryModel>> GetAllCategories()
         {
-            await Initialize();
+            Initialize();
             return await _categoryTable.SelectAll(_conn);
         }
+        public async static Task<List<CategoryModel>> GetChildCategories(Guid? parentCategoryId)
+        {
+            Initialize();
+            return await _categoryTable.SelectAllChildren(_conn, parentCategoryId);
+        }
+        
+        public async static Task<CategoryModel?> AddCategory(Guid? parentCategory, string catName)
+        {
+            Initialize();
+            return await _categoryTable.Insert(_conn, parentCategory, catName);
+        }
 
+        public async static Task UpdateCategoryt(CategoryModel cat)
+        {
+            Initialize();
+            await _categoryTable.Update(_conn, cat);
+        }
         public async static Task<List<CategoryRegexModel>> GetCategoryRegexes(Guid conversionRuleId)
         {
-            await Initialize();
+            Initialize();
             return await _categoryRegexTable.SelectConversionRuleRegexes(_conn, conversionRuleId);
         }
 
@@ -113,68 +146,68 @@ namespace FinanceTracker.Models
         #region Conversion Tables
         public async static Task<ConversionRuleSplitterModel> GetConversionRule_Splitter(Guid accId)
         {
-            await Initialize();
+            Initialize();
             return await _conversionRuleSplitterTable.Select(_conn, accId);
         }
 
         public async static Task<ConversionRuleNameModel> GetConversionRule_Name(Guid accId)
         {
-            await Initialize();
+            Initialize();
             return await _conversionRuleNameTable.Select(_conn, accId);
         }
 
         public async static Task<ConversionRuleDateModel> GetConversionRule_Date(Guid accId)
         {
-            await Initialize();
+            Initialize();
             return await _conversionRuleDateTable.Select(_conn, accId);
         }
 
         public async static Task<ConversionRuleCategoryModel> GetConversionRule_Category(Guid accId)
         {
-            await Initialize();
+            Initialize();
             return await _conversionRuleCategoryTable.Select(_conn, accId);
         }
 
         public async static Task<ConversionRuleDollarValueModel> GetConversionRule_DollarValue(Guid accId)
         {
-            await Initialize();
+            Initialize();
             return await _conversionRuleDollarValueTable.Select(_conn, accId);
         }
 
         public async static Task<ConversionRuleBalanceModel> GetConversionRule_Balance(Guid accId)
         {
-            await Initialize();
+            Initialize();
             return await _conversionRuleBalanceTable.Select(_conn, accId);
         }
 
         public async static Task UpdateConversionRule_Splitter(ConversionRuleSplitterModel splitterRule)
         {
-            await Initialize();
+            Initialize();
             await _conversionRuleSplitterTable.Update(_conn, splitterRule);
         }
         public async static Task UpdateConversionRule_Name(ConversionRuleNameModel nameRule)
         {
-            await Initialize();
+            Initialize();
             await _conversionRuleNameTable.Update(_conn, nameRule);
         }
         public async static Task UpdateConversionRule_Date(ConversionRuleDateModel dateRule)
         {
-            await Initialize();
+            Initialize();
             await _conversionRuleDateTable.Update(_conn, dateRule);
         }
         public async static Task UpdateConversionRule_DollarValue(ConversionRuleDollarValueModel dollarValueRule)
         {
-            await Initialize();
+            Initialize();
             await _conversionRuleDollarValueTable.Update(_conn, dollarValueRule);
         }
         public async static Task UpdateConversionRule_Balance(ConversionRuleBalanceModel balanceRule)
         {
-            await Initialize();
+            Initialize();
             await _conversionRuleBalanceTable.Update(_conn, balanceRule);
         }
         public async static Task UpdateConversionRule_Category(ConversionRuleCategoryModel categoryRule)
         {
-            await Initialize();
+            Initialize();
             await _conversionRuleCategoryTable.Update(_conn, categoryRule);
             //TODO update regex list 
         }

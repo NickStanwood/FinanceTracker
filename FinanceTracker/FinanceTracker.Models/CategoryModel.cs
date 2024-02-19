@@ -10,6 +10,6 @@ namespace FinanceTracker.Models
         public string Name { get; set; }
 
         [ForeignKey(typeof(CategoryModel))]
-        public Guid ParentCategoryId { get; set; }
+        public Guid? ParentCategoryId { get; set; }
     }
 }

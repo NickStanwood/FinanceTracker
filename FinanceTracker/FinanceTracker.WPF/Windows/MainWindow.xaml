@@ -79,6 +79,11 @@
                                  NotifyOnSourceUpdated=True,
                                  Converter={StaticResource ViewStateVisibilityConverter}, 
                                  ConverterParameter={x:Static local:MainWindowViewState.Account}}"/>
+        <local:CategoryUserControl Grid.Row="1" Grid.Column="1" 
+            Visibility="{Binding Path=ViewState, 
+                                 Converter={StaticResource ViewStateVisibilityConverter}, 
+                                 ConverterParameter={x:Static local:MainWindowViewState.Categories}}"/>
+        
         <TextBlock Grid.Row="1" Grid.Column="1" 
             Visibility="{Binding Path=ViewState, 
                                  Converter={StaticResource ViewStateVisibilityConverter}, 
