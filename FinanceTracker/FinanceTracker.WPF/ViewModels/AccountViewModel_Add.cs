@@ -43,6 +43,11 @@ namespace FinanceTracker.WPF
         public bool BalanceRule_ApplyNegation { get { return balanceRule_ != null ? balanceRule_.ApplyNegation : false; } set { balanceRule_.ApplyNegation = value; Notify(); } }
         public bool BalanceRule_DataAvailable { get { return balanceRule_ != null ? balanceRule_.DataAvailable : false; } set { balanceRule_.DataAvailable = value; Notify(); } }
 
+        //Category Rule
+        public int CategoryRule_Column { get { return categoryRule_ != null ? categoryRule_.Column : 0; } set { categoryRule_.Column = value; Notify(); } }
+        public ObservableCollection<CategoryRegexViewModel> CategoryRule_Regexes { get; set; } = new ObservableCollection<CategoryRegexViewModel>();
+
+
         //conversion rules
         private ConversionRuleSplitterModel splitterRule_;
         private ConversionRuleNameModel nameRule_;
@@ -74,6 +79,13 @@ namespace FinanceTracker.WPF
             dollarValueRule_ = await SQLiteContext.GetConversionRule_DollarValue(_m.Id);
             balanceRule_ = await SQLiteContext.GetConversionRule_Balance(_m.Id);
             categoryRule_ = await SQLiteContext.GetConversionRule_Category(_m.Id);
+
+            List<CategoryRegexModel> regexes = await SQLiteContext.GetCategoryRegexes(categoryRule_.Id);
+            foreach(var regex in regexes)
+            {
+                CategoryRule_Regexes.Add(new CategoryRegexViewModel(regex));
+            }
+
             Notify(nameof(SplitterRule_DelimChar));
             Notify(nameof(SplitterRule_IgnoreDelimInQuotes));
             Notify(nameof(NameRule_Column));
@@ -104,6 +116,12 @@ namespace FinanceTracker.WPF
             string fileText = File.ReadAllText(RawTransFilePath);
             string[] lines = fileText.Split('\n');
 
+            List<CategoryRegexModel> regexes = new List<CategoryRegexModel>();
+            foreach(CategoryRegexViewModel regvm in CategoryRule_Regexes)
+            {
+                regexes.Add(regvm.GetModel());
+            }
+
             ConvertTransactions.Clear();
             foreach (string line in lines)
             {
@@ -111,7 +129,7 @@ namespace FinanceTracker.WPF
                     continue;
 
                 ConvertTransactionViewModel ct = new ConvertTransactionViewModel(_m, line);
-                await ct.ConvertTransaction(splitterRule_, nameRule_, dateRule_, dollarValueRule_, balanceRule_, categoryRule_);
+                await ct.ConvertTransaction(splitterRule_, nameRule_, dateRule_, dollarValueRule_, balanceRule_, categoryRule_, regexes);
                 ConvertTransactions.Add(ct);
             }
         }

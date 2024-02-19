@@ -105,7 +105,8 @@ namespace FinanceTracker.WPF
             ConversionRuleDateModel dateRule,
             ConversionRuleDollarValueModel dollarValueRule,
             ConversionRuleBalanceModel balanceRule,
-            ConversionRuleCategoryModel categoryRule)
+            ConversionRuleCategoryModel categoryRule,
+            List<CategoryRegexModel> categoryRegexes)
         {
             ConversionErrors.Clear();
             List<string> splitTrans = null;
@@ -166,7 +167,7 @@ namespace FinanceTracker.WPF
 
             try
             {
-                category = await categoryRule.Convert(splitTrans);
+                category = await categoryRule.Convert(splitTrans, categoryRegexes);
             }
             catch (Exception ex)
             {
