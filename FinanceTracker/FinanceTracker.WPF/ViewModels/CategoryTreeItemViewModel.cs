@@ -17,6 +17,7 @@ namespace FinanceTracker.WPF
         public CategoryTreeItemViewModel(CategoryModel model) : base(model) { }
         protected override async void Initialize()
         {
+
             List<CategoryModel> children = await SQLiteContext.GetChildCategories(_m.Id);
             foreach(var child in children)
             {

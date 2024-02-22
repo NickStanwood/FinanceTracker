@@ -51,8 +51,14 @@ namespace FinanceTracker.Models
                 List<CategoryModel> categories = GetAllCategories().Result;
                 if (categories.Count == 0)
                 {
-                    AddCategory(null, "Income").Wait();
-                    AddCategory(null, "Expense").Wait();
+                    CategoryModel inc = AddCategory(null, "Income").Result;
+                    AddCategory(inc.Id, "Salary").Wait();
+                    AddCategory(inc.Id, "Capital Gain").Wait();
+                    CategoryModel exp = AddCategory(null, "Expense").Result;
+                    CategoryModel trans = AddCategory(null, "Transfer").Result;
+                    AddCategory(trans.Id, "Savings").Wait();
+                    AddCategory(trans.Id, "Credit Card Bill").Wait();
+
                 }
             }
                       

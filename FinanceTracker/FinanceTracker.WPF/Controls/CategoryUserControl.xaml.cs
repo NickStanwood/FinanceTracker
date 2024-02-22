@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,9 +22,11 @@ namespace FinanceTracker.WPF
     /// <summary>
     /// Interaction logic for CategoryUserControl.xaml
     /// </summary>
-    public partial class CategoryUserControl : UserControl
+    public partial class CategoryUserControl : UserControl , INotifyPropertyChanged
     {
         public ObservableCollection<CategoryTreeItemViewModel> CategoryList { get; set; } = new ObservableCollection<CategoryTreeItemViewModel>();
+        private CategoryTreeItemViewModel _selectedCategory;
+        public CategoryTreeItemViewModel SelectedCategory { get { return _selectedCategory; } set { _selectedCategory = value; Notify(); } }
         public LamdaCommand AddCategoryCmd { get; set; }
 
         public CategoryUserControl()
@@ -35,6 +39,7 @@ namespace FinanceTracker.WPF
                 (obj) => AddChildCategory((CategoryTreeItemViewModel?)obj)
             );
         }
+
 
         private async void UpdateCategories()
         {
@@ -54,9 +59,29 @@ namespace FinanceTracker.WPF
         {
             if (parent == null)
                 return;
+            CategoryNameWindow dlg = new CategoryNameWindow();
+            if(dlg.ShowDialog() == true)
+            {
+                await SQLiteContext.AddCategory(parent.GetModel().Id, dlg.CategoryName);
+                UpdateCategories();
+            }
+            
+        }
 
-            await SQLiteContext.AddCategory(parent.GetModel().Id, "[New Category]");
-            UpdateCategories();
+        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            SelectedCategory = (CategoryTreeItemViewModel)e.NewValue;
+        }
+
+        private void ButtonDelete_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void Notify([CallerMemberName] string property = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
     }
 }
