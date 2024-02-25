@@ -29,7 +29,7 @@ namespace FinanceTracker.Models
                 Regex reg = new Regex(rm.Regex);
                 if(reg.IsMatch(splitTrans[Column]))
                 {
-                    CategoryModel model = await SQLiteContext.GetCategory(rm.CategoryId);
+                    return await SQLiteContext.GetCategory(rm.CategoryId);
                 }
             }
 

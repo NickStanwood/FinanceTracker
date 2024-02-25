@@ -88,6 +88,7 @@
                             <DataGridTextColumn Width="*" Header="Raw Transaction" Binding="{Binding RawTransaction}"/>
                             <DataGridTextColumn Width="100" Header="Date" Binding="{Binding ConvDate}"/>
                             <DataGridTextColumn Width="100" Header="Name" Binding="{Binding ConvName}"/>
+                            <DataGridTextColumn Width="100" Header="Category" Binding="{Binding ConvCategory}"/>
                             <DataGridTextColumn Width="100" Header="Dollar Value" Binding="{Binding ConvDollarValue}"/>
                             <DataGridTextColumn Width="100" Header="Balance" Binding="{Binding ConvBalance}"/>
                         </DataGrid.Columns>
@@ -162,12 +163,32 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Category String Matches" TextAlignment="Right" Width="160" Margin="0,0,5,0"/>
-                            <DataGrid ItemsSource="{Binding Account.CategoryRule_Regexes}" AutoGenerateColumns="False">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="String match" Binding="{Binding CategoryRegex}"/>
-                                    <DataGridTextColumn Header="Category" Binding="{Binding CategoryName}"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions> 
+                                <DataGrid Grid.ColumnSpan="3" ItemsSource="{Binding Account.CategoryRule_Regexes}" AutoGenerateColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="String match" Binding="{Binding CategoryRegex}" Width="200"/>
+                                        <DataGridTextColumn Header="Category" Binding="{Binding CategoryName}" Width="200"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <TextBox  Grid.Column="0" Grid.Row="1" Text="{Binding Account.NewCategoryRegex}"/>
+                                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Account.CategoryOptions}" SelectedItem="{Binding Account.NewCategorySelection}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <Button Grid.Column="2" Grid.Row="1" Content="+" Padding="5,0,5,0" Command="{Binding Account.AddCategoryRegex}"/>
+                            </Grid>                            
                         </StackPanel>
                         <TextBlock Text="Balance Conversion Rules" HorizontalAlignment="Stretch" Background="LightGray" Margin="0,10,0,0"/>
                         <StackPanel Orientation="Horizontal">

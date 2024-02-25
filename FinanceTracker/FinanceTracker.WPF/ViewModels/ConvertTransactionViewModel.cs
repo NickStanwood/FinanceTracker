@@ -50,6 +50,17 @@ namespace FinanceTracker.WPF
                 Notify(); 
             } 
         }
+        public string? ConvCategory
+        {
+            get
+            {
+                if(_convertedTrans == null || _convertedTrans.CategoryId == null)
+                    return null;
+
+                var cm = SQLiteContext.GetCategory((Guid)_convertedTrans.CategoryId).Result;
+                return cm.Name;
+            }
+        }
 
         public double? ConvDollarValue 
         { 

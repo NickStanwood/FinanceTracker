@@ -21,6 +21,7 @@ namespace FinanceTracker.WPF
         public LamdaCommand BrowseCmd { get; set; }
         public LamdaCommand RefreshCmd { get; set; }
         public LamdaCommand SaveCmd { get; set; }
+        public LamdaCommand AddCategoryRegex { get; set; }
 
         //spliter rule 
         public string SplitterRule_DelimChar { get { return splitterRule_ != null ? splitterRule_.DelimChar : ""; } set { splitterRule_.DelimChar = value; Notify(); } }
@@ -47,6 +48,12 @@ namespace FinanceTracker.WPF
         public int CategoryRule_Column { get { return categoryRule_ != null ? categoryRule_.Column : 0; } set { categoryRule_.Column = value; Notify(); } }
         public ObservableCollection<CategoryRegexViewModel> CategoryRule_Regexes { get; set; } = new ObservableCollection<CategoryRegexViewModel>();
 
+        //new Category regex
+        private string _newCategoryRegex = "";
+        public string NewCategoryRegex { get { return _newCategoryRegex; } set { _newCategoryRegex = value; Notify(); } }
+        public ObservableCollection<CategoryModel> CategoryOptions { get; set; } = new ObservableCollection<CategoryModel>();
+        private CategoryModel _newCategorySelection;
+        public CategoryModel NewCategorySelection { get { return _newCategorySelection; } set { _newCategorySelection = value; Notify(); } }
 
         //conversion rules
         private ConversionRuleSplitterModel splitterRule_;
@@ -72,6 +79,10 @@ namespace FinanceTracker.WPF
                 (obj) => true,
                 (obj) => SaveConvertedTransactions()
             );
+            AddCategoryRegex = new LamdaCommand(
+                (obj) => true,
+                (obj) => AddCategoryRegexToRule()
+            );
 
             splitterRule_ = await SQLiteContext.GetConversionRule_Splitter(_m.Id);
             nameRule_ = await SQLiteContext.GetConversionRule_Name(_m.Id);
@@ -85,6 +96,8 @@ namespace FinanceTracker.WPF
             {
                 CategoryRule_Regexes.Add(new CategoryRegexViewModel(regex));
             }
+
+            await UpdateCategoryRule();
 
             Notify(nameof(SplitterRule_DelimChar));
             Notify(nameof(SplitterRule_IgnoreDelimInQuotes));
@@ -153,6 +166,27 @@ namespace FinanceTracker.WPF
             await SQLiteContext.AddTransactions(convTrans);
 
             ConvertTransactions.Clear();
+        }
+
+        private async Task UpdateCategoryRule()
+        {
+            //update all categories
+            CategoryOptions.Clear();
+            List<CategoryModel> categories = await SQLiteContext.GetAllCategories();
+            foreach(CategoryModel c in categories)
+                CategoryOptions.Add(c);
+
+            //update category regexes
+            CategoryRule_Regexes.Clear();
+            List<CategoryRegexModel> crms = await SQLiteContext.GetCategoryRegexes(categoryRule_.Id);
+            foreach (CategoryRegexModel crm in crms)
+                CategoryRule_Regexes.Add(new CategoryRegexViewModel(crm));
+        }
+
+        private async Task AddCategoryRegexToRule()
+        {
+            await SQLiteContext.AddCategoryRegex(categoryRule_.Id, NewCategorySelection.Id, NewCategoryRegex);
+            await UpdateCategoryRule();
         }
     }
 }

@@ -147,6 +147,12 @@ namespace FinanceTracker.Models
             return await _categoryRegexTable.SelectConversionRuleRegexes(_conn, conversionRuleId);
         }
 
+        public async static Task<CategoryRegexModel?> AddCategoryRegex(Guid conversionRuleId, Guid CategoryId, string regex)
+        {
+            Initialize();
+            return await _categoryRegexTable.Insert(_conn, conversionRuleId, CategoryId, regex);
+        }
+
         #endregion
 
         #region Conversion Tables
