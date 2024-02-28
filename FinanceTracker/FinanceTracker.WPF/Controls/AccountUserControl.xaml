@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:FinanceTracker.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <local:CategoryIdToNameConverter x:Key="CategoryIdToNameConverter"/>
+    </UserControl.Resources>
     <Grid DataContext="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -35,7 +38,7 @@
                                 <StackPanel Orientation="Horizontal" Margin="5,2,5,2">
                                     <TextBlock Text="{Binding Path=Date, StringFormat=dd-MMM-yyyy}" Margin="0,0,10,0" MinWidth="50"/>
                                     <TextBlock Text="{Binding Path=DollarValue, StringFormat={}$  {0:#,#.00}}" Margin="0,0,10,0" MinWidth="50"/>
-                                    <TextBlock Text="{Binding Category}" Margin="0,0,10,0" MinWidth="50"/>
+                                    <TextBlock Text="{Binding Path=CategoryId, Converter={StaticResource CategoryIdToNameConverter}}" Margin="0,0,10,0" MinWidth="50"/>
                                     <TextBlock Text="{Binding Name}"  MinWidth="50"/>
                                 </StackPanel>
                             </DataTemplate>
@@ -88,7 +91,7 @@
                             <DataGridTextColumn Width="*" Header="Raw Transaction" Binding="{Binding RawTransaction}"/>
                             <DataGridTextColumn Width="100" Header="Date" Binding="{Binding ConvDate}"/>
                             <DataGridTextColumn Width="100" Header="Name" Binding="{Binding ConvName}"/>
-                            <DataGridTextColumn Width="100" Header="Category" Binding="{Binding ConvCategory}"/>
+                            <DataGridTextColumn Width="100" Header="Category" Binding="{Binding Path=ConvCategory, Converter={StaticResource CategoryIdToNameConverter}}"/>
                             <DataGridTextColumn Width="100" Header="Dollar Value" Binding="{Binding ConvDollarValue}"/>
                             <DataGridTextColumn Width="100" Header="Balance" Binding="{Binding ConvBalance}"/>
                         </DataGrid.Columns>
