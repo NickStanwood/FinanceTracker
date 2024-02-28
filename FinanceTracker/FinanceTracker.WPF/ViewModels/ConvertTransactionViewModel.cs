@@ -50,15 +50,17 @@ namespace FinanceTracker.WPF
                 Notify(); 
             } 
         }
-        public string? ConvCategory
+        private string _convCategory = "";
+        public string ConvCategory
         {
             get
             {
-                if(_convertedTrans == null || _convertedTrans.CategoryId == null)
-                    return null;
-
-                var cm = SQLiteContext.GetCategory((Guid)_convertedTrans.CategoryId).Result;
-                return cm.Name;
+                return _convCategory;
+            }
+            set
+            {
+                _convCategory = value;
+                Notify();
             }
         }
 
@@ -179,6 +181,16 @@ namespace FinanceTracker.WPF
             try
             {
                 category = await categoryRule.Convert(splitTrans, categoryRegexes);
+                if(category != null)
+                {
+                    CategoryModel cm = await SQLiteContext.GetCategory(category.Id);
+                    ConvCategory = cm.Name;
+                }
+                else
+                {
+                    ConvCategory = "";
+                }
+                
             }
             catch (Exception ex)
             {
