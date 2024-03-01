@@ -14,15 +14,6 @@ using FinanceTracker.Models;
 
 namespace FinanceTracker.WPF
 {
-    public enum MainWindowViewState
-    {
-        None,
-        Goals,
-        Budget,
-        NetWorth,
-        Account,
-    }
-
     internal class FinancesViewModel : INotifyPropertyChanged
     {
         public LamdaCommand AddAccountCmd { get; set; }
@@ -45,10 +36,11 @@ namespace FinanceTracker.WPF
 
             BindingOperations.EnableCollectionSynchronization(Accounts.AccountList, _accountLock);
 
-            NavigationItems.Add(new NavigationViewModel { Name = "Budget"});
-            NavigationItems.Add(new NavigationViewModel { Name = "Goals" });
-            NavigationItems.Add(new NavigationViewModel { Name = "Net Worth" });
+            NavigationItems.Add(new NavigationViewModel { Name = "Budget"   , ViewState = MainWindowViewState.Budget});
+            NavigationItems.Add(new NavigationViewModel { Name = "Goals"    , ViewState = MainWindowViewState.Goals });
+            NavigationItems.Add(new NavigationViewModel { Name = "Net Worth", ViewState = MainWindowViewState.NetWorth });
             NavigationItems.Add(Accounts);
+            NavigationItems.Add(new NavigationViewModel { Name = "Categories", ViewState = MainWindowViewState.Categories });
 
             Task.Factory.StartNew(() => InitializeAccounts());
 
@@ -75,8 +67,9 @@ namespace FinanceTracker.WPF
 
         public void NavigationStateChanged(object sender, NavigationViewModel m)
         {
-            ViewState = MainWindowViewState.None;
+            ViewState = m.ViewState;
         }
+
         public void NavigationStateChanged(object sender, AccountModel m)
         {
             AccountViewModel = new AccountViewModel(m);

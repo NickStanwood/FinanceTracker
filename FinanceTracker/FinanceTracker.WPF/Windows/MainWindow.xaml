@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FinanceTracker.WPF"
         xmlns:model="clr-namespace:FinanceTracker.Models;assembly=FinanceTracker.Models"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="800" Width="1500">
     <Window.DataContext>
         <local:FinancesViewModel/>
     </Window.DataContext>
@@ -79,6 +79,11 @@
                                  NotifyOnSourceUpdated=True,
                                  Converter={StaticResource ViewStateVisibilityConverter}, 
                                  ConverterParameter={x:Static local:MainWindowViewState.Account}}"/>
+        <local:CategoryUserControl Grid.Row="1" Grid.Column="1" 
+            Visibility="{Binding Path=ViewState, 
+                                 Converter={StaticResource ViewStateVisibilityConverter}, 
+                                 ConverterParameter={x:Static local:MainWindowViewState.Categories}}"/>
+        
         <TextBlock Grid.Row="1" Grid.Column="1" 
             Visibility="{Binding Path=ViewState, 
                                  Converter={StaticResource ViewStateVisibilityConverter}, 

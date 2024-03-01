@@ -16,7 +16,7 @@ namespace FinanceTracker.Models
         public bool UseAdvanced { get; set; }
         public string AdvancedScript { get; set; }
 
-        public async Task<CategoryModel?> Convert(List<string> splitTrans)
+        public async Task<CategoryModel?> Convert(List<string> splitTrans, List<CategoryRegexModel> regexes)
         {
             if (UseAdvanced)
                 throw new NotImplementedException();
@@ -24,13 +24,12 @@ namespace FinanceTracker.Models
             if (Column > splitTrans.Count - 1)
                 throw new ArgumentOutOfRangeException();
 
-            List<CategoryRegexModel> regexes = await SQLiteContext.GetCategoryRegexes(Id);
             foreach(CategoryRegexModel rm in regexes)
             {
                 Regex reg = new Regex(rm.Regex);
                 if(reg.IsMatch(splitTrans[Column]))
                 {
-                    CategoryModel model = await SQLiteContext.GetCategory(rm.CategoryId);
+                    return await SQLiteContext.GetCategory(rm.CategoryId);
                 }
             }
 
