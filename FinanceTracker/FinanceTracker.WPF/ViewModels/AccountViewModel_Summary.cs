@@ -25,6 +25,8 @@ namespace FinanceTracker.WPF
         private double _averagePurchaseCost = 0.0;
         public double AveragePurchaseCost { get { return _averagePurchaseCost; } private set { _averagePurchaseCost = value; Notify(); } }
 
+        public ObservableCollection<DateTimeDoublePoint> BalanceOverTime { get; set; } = new ObservableCollection<DateTimeDoublePoint>();
+
         public ObservableCollection<CategoryStats> Categories { get; set; } = new ObservableCollection<CategoryStats>();
         public ObservableCollection<TransactionModel> Transactions { get; set; } = new ObservableCollection<TransactionModel>();
         public LamdaCommand UpdateBalance { get; set; }
