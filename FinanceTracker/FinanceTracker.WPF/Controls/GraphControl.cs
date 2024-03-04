@@ -54,25 +54,17 @@ namespace FinanceTracker.WPF
             }
 
 
-            if (newValue == null || newValue.Count() == 0)
-            {
-                GraphData = null;
-                return;
-            }
+        }
 
-            List<IGraphPoint>? gpList = newValue as List<IGraphPoint>;
-            if (gpList == null || newValue.Count() == 0)
-            {
-                GraphData = null;
-                return;
-            }
-
-            IComparable xMin = gpList[0].GetXValue();
-            IComparable xMax = gpList[0].GetXValue();
-            IComparable yMin = gpList[0].GetYValue();
-            IComparable yMax = gpList[0].GetYValue();
-
+        void newValueINotifyCollectionChanged_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            List<IGraphPoint> gpList = ItemsSource.Cast<IGraphPoint>().ToList();
             gpList.Sort();
+            IComparable xMin = gpList[0].GetXValue();
+            IComparable xMax = gpList[gpList.Count - 1].GetXValue();
+            IComparable yMin = gpList[0].GetYValue();
+            IComparable yMax = gpList[gpList.Count - 1].GetYValue();
+
 
             //get max and min values
             foreach (IGraphPoint gp in gpList)
@@ -91,20 +83,31 @@ namespace FinanceTracker.WPF
             }
 
             //add points to graph
-            GraphData = new Point[gpList.Count];
+            Point[] points = new Point[gpList.Count];
             int i = 0;
             foreach (IGraphPoint gp in gpList)
             {
-                double x = gp.GetXPosition(xMin, xMin, yMin, yMax);
-                double y = gp.GetXPosition(xMin, xMin, yMin, yMax);
-                GraphData[i++] = new Point(x, y);
+                double x = gp.GetXPosition(xMin, xMax, yMin, yMax);
+                double y = gp.GetYPosition(xMin, xMax, yMin, yMax);
+                points[i++] = new Point(x, y);
             }
 
-        }
-
-        void newValueINotifyCollectionChanged_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            
+            if (points.Length > 0)
+            {
+                Point start = points[0];
+                List<LineSegment> segments = new List<LineSegment>();
+                for (i = 1; i < points.Length; i++)
+                {
+                    segments.Add(new LineSegment(points[i], true));
+                }
+                PathFigure figure = new PathFigure(start, segments, false); //true if closed
+                GraphData = new PathGeometry();
+                GraphData.Figures.Add(figure);
+            }
+            else
+            {
+                GraphData = null;
+            }
         }
         #endregion
 
@@ -118,9 +121,9 @@ namespace FinanceTracker.WPF
         // Returns:
         //     The brush that paints the foreground of the control. The default value is the
         //     system dialog font color.
-        [Bindable(false)]
+        [Bindable(true)]
         [Category("Appearance")]
-        public Point[]? GraphData {get; set;}
+        public PathGeometry GraphData { get; set; }
         #endregion
 
         static GraphControl()

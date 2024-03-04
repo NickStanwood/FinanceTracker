@@ -54,7 +54,10 @@ namespace FinanceTracker.WPF
             foreach(TransactionModel transaction in transactions)
             {
                 Transactions.Add(transaction);
+                if (transaction.Balance != null)
+                    BalanceOverTime.Add(new DateTimeDoublePoint(transaction.Date, (double)transaction.Balance));
             }
+            Notify(nameof(BalanceOverTime));
 
             //average out the transactions in the past month
             TimeSpan avgPeriod = TimeSpan.FromDays(30);
