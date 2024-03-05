@@ -44,24 +44,63 @@ namespace FinanceTracker.WPF
 
         public double GetXPosition(DateTime minX, DateTime maxX, double minY, double maxY)
         {
+            if (minX == maxX)
+                return 0.5;
+
             TimeSpan total = maxX - minX;
             return (_x - minX).TotalMilliseconds / total.TotalMilliseconds;
         }
 
         public double GetYPosition(DateTime minX, DateTime maxX, double minY, double maxY)
         {
-            return (_y - minY) / (maxY - minY);
+            if(minY == maxY)
+                return 0.5;
+
+            return -(_y - minY) / (maxY - minY) + 1.0;
         }
 
-        #region IGraphPoint implementation
+        public double GetXAxisPosition(DateTime minX, DateTime maxX, double minY, double maxY)
+        {
+            //Axis needs to be where the y value = 0
+            return (0 - minY) / (maxY - minY);
+        }
+
+        public double GetYAxisPosition(DateTime minX, DateTime maxX, double minY, double maxY)
+        {
+            return double.NaN;
+        }
+    }
+
+    public interface IGraphPoint<XType, YType> : IGraphPoint
+        where XType : IComparable
+        where YType : IComparable
+    {
+        public double GetXPosition(XType minX, XType maxX, YType minY, YType maxY);
+        public double GetYPosition(XType minX, XType maxX, YType minY, YType maxY);
+        public double GetXAxisPosition(XType minX, XType maxX, YType minY, YType maxY);
+        public double GetYAxisPosition(XType minX, XType maxX, YType minY, YType maxY);
+        new public XType GetXValue();
+        new public YType GetYValue();
+
+        #region IGraphPoint redirects
         double IGraphPoint.GetXPosition(object minX, object maxX, object minY, object maxY)
         {
-            return GetXPosition((DateTime)minX, (DateTime)maxX, (double)minY, (double)maxY);
+            return GetXPosition((XType)minX, (XType)maxX, (YType)minY, (YType)maxY);
         }
 
         double IGraphPoint.GetYPosition(object minX, object maxX, object minY, object maxY)
         {
-            return GetYPosition((DateTime)minX, (DateTime)maxX, (double)minY, (double)maxY);
+            return GetYPosition((XType)minX, (XType)maxX, (YType)minY, (YType)maxY);
+        }
+
+        double IGraphPoint.GetXAxisPosition(object minX, object maxX, object minY, object maxY)
+        {
+            return GetXAxisPosition((XType)minX, (XType)maxX, (YType)minY, (YType)maxY);
+        }
+
+        double IGraphPoint.GetYAxisPosition(object minX, object maxX, object minY, object maxY)
+        {
+            return GetXAxisPosition((XType)minX, (XType)maxX, (YType)minY, (YType)maxY);
         }
 
         IComparable IGraphPoint.GetXValue()
@@ -75,20 +114,13 @@ namespace FinanceTracker.WPF
         }
         #endregion
     }
-    public interface IGraphPoint<XType, YType> : IGraphPoint
-        where XType : IComparable
-        where YType : IComparable
-    {
-        public double GetXPosition(XType minX, XType maxX, YType minY, YType maxY);
-        public double GetYPosition(XType minX, XType maxX, YType minY, YType maxY);
-        new public XType GetXValue();
-        new public YType GetYValue();
-    }
 
     public interface IGraphPoint : IComparable
     {
         public double GetXPosition(object minX, object maxX, object minY, object maxY);
         public double GetYPosition(object minX, object maxX, object minY, object maxY);
+        public double GetXAxisPosition(object minX, object maxX, object minY, object maxY);
+        public double GetYAxisPosition(object minX, object maxX, object minY, object maxY);
         public IComparable GetXValue();
         public IComparable GetYValue();
     }

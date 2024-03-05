@@ -8,11 +8,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:GraphControl}">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <!--<Path Data="{TemplateBinding GraphData}"/>-->
-                    </Border>
+                    <Canvas Background="{TemplateBinding Background}">
+                        <Path Data="{TemplateBinding GraphData}" Stroke="Green" StrokeThickness="1.5"/>
+                        <Path Data="{TemplateBinding XAxis}" Stroke="Black" StrokeThickness="0.5"/>
+                    </Canvas>                    
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

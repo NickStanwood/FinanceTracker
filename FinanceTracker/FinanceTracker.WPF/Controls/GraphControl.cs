@@ -82,13 +82,14 @@ namespace FinanceTracker.WPF
                     yMax = y;
             }
 
+
             //add points to graph
             Point[] points = new Point[gpList.Count];
             int i = 0;
             foreach (IGraphPoint gp in gpList)
             {
-                double x = gp.GetXPosition(xMin, xMax, yMin, yMax);
-                double y = gp.GetYPosition(xMin, xMax, yMin, yMax);
+                double x = gp.GetXPosition(xMin, xMax, yMin, yMax) * Width;
+                double y = gp.GetYPosition(xMin, xMax, yMin, yMax) * Height;
                 points[i++] = new Point(x, y);
             }
 
@@ -108,22 +109,52 @@ namespace FinanceTracker.WPF
             {
                 GraphData = null;
             }
+
+            //set Xaxis
+            double xAxisHeight = -gpList[0].GetXAxisPosition(xMin, xMax, yMin, yMax)*Height;
+            Point xstart = new Point(0, xAxisHeight);
+            Point xEnd = new Point(Width, xAxisHeight);
+            List<LineSegment> seg = new List<LineSegment>();
+            seg.Add(new LineSegment(xEnd, true));
+            PathFigure xFig = new PathFigure(xstart, seg, false);
+            XAxis = new PathGeometry();
+            XAxis.Figures.Add(xFig);
         }
         #endregion
 
         #region GraphData
-        public static readonly DependencyProperty GraphDataProperty;
+        [Bindable(false)]
+        [Category("Appearance")]
+        public PathGeometry GraphData
+        {
+            get { return (PathGeometry)GetValue(GraphDataProperty); }
+            set { SetValue(GraphDataProperty, value); }
+        }
 
-        //
-        // Summary:
-        //     Gets or sets a brush that describes the foreground color.
-        //
-        // Returns:
-        //     The brush that paints the foreground of the control. The default value is the
-        //     system dialog font color.
+        public static readonly DependencyProperty GraphDataProperty 
+            = DependencyProperty.Register("GraphData", typeof(PathGeometry), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnGraphDataPropertyChanged)));
+        private static void OnGraphDataPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            
+        }
+
+        #endregion
+
+        #region XAxis
         [Bindable(true)]
         [Category("Appearance")]
-        public PathGeometry GraphData { get; set; }
+        public PathGeometry XAxis
+        {
+            get { return (PathGeometry)GetValue(XAxisProperty); }
+            set { SetValue(XAxisProperty, value); }
+        }
+
+        public static readonly DependencyProperty XAxisProperty
+            = DependencyProperty.Register("XAxis", typeof(PathGeometry), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnXAxisPropertyChanged)));
+        private static void OnXAxisPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
         #endregion
 
         static GraphControl()
