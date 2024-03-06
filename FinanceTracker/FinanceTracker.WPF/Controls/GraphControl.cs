@@ -62,9 +62,14 @@ namespace FinanceTracker.WPF
             gpList.Sort();
             IComparable xMin = gpList[0].GetXValue();
             IComparable xMax = gpList[gpList.Count - 1].GetXValue();
-            IComparable yMin = gpList[0].GetYValue();
-            IComparable yMax = gpList[gpList.Count - 1].GetYValue();
 
+            IComparable yMin = gpList[0].GetYValue();
+            if (ReadLocalValue(MinYProperty) != DependencyProperty.UnsetValue)
+                yMin = MinY.GetYValue();
+            
+            IComparable yMax = gpList[gpList.Count - 1].GetYValue();
+            if (ReadLocalValue(MaxYProperty) != DependencyProperty.UnsetValue)
+                yMax = MaxY.GetYValue();
 
             //get max and min values
             foreach (IGraphPoint gp in gpList)
@@ -111,7 +116,7 @@ namespace FinanceTracker.WPF
             }
 
             //set Xaxis
-            double xAxisHeight = -gpList[0].GetXAxisPosition(xMin, xMax, yMin, yMax)*Height;
+            double xAxisHeight = gpList[0].GetXAxisPosition(xMin, xMax, yMin, yMax)*Height;
             Point xstart = new Point(0, xAxisHeight);
             Point xEnd = new Point(Width, xAxisHeight);
             List<LineSegment> seg = new List<LineSegment>();
@@ -157,6 +162,41 @@ namespace FinanceTracker.WPF
         }
         #endregion
 
+        #region MinY
+        [Bindable(true)]
+        [Category("Appearance")]
+        public IGraphPoint MinY
+        {
+            get { return (IGraphPoint)GetValue(MinYProperty); }
+            set { SetValue(MinYProperty, value); }
+        }
+
+        public static readonly DependencyProperty MinYProperty
+            = DependencyProperty.Register("MinY", typeof(IGraphPoint), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnMinYPropertyChanged)));
+        private static void OnMinYPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+
+        #endregion
+
+        #region MaxY
+        [Bindable(true)]
+        [Category("Appearance")]
+        public IGraphPoint MaxY
+        {
+            get { return (IGraphPoint)GetValue(MaxYProperty); }
+            set { SetValue(MaxYProperty, value); }
+        }
+
+        public static readonly DependencyProperty MaxYProperty
+            = DependencyProperty.Register("MaxY", typeof(IGraphPoint), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnMaxYPropertyChanged)));
+        private static void OnMaxYPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+
+        #endregion
         static GraphControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(GraphControl), new FrameworkPropertyMetadata(typeof(GraphControl)));

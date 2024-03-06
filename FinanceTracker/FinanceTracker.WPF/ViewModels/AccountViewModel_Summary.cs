@@ -26,6 +26,8 @@ namespace FinanceTracker.WPF
         public double AveragePurchaseCost { get { return _averagePurchaseCost; } private set { _averagePurchaseCost = value; Notify(); } }
 
         public ObservableCollection<DateTimeDoublePoint> BalanceOverTime { get; set; } = new ObservableCollection<DateTimeDoublePoint>();
+        public DateTimeDoublePoint MinY { get; set; } = new DateTimeDoublePoint(DateTime.MinValue, -5000.0);
+        public DateTimeDoublePoint MaxY { get; set; } = new DateTimeDoublePoint(DateTime.MinValue, 1000.0);
 
         public ObservableCollection<CategoryStats> Categories { get; set; } = new ObservableCollection<CategoryStats>();
         public ObservableCollection<TransactionModel> Transactions { get; set; } = new ObservableCollection<TransactionModel>();
