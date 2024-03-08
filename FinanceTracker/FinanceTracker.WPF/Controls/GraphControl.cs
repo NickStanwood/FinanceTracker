@@ -93,8 +93,8 @@ namespace FinanceTracker.WPF
             int i = 0;
             foreach (IGraphPoint gp in gpList)
             {
-                double x = gp.GetXPosition(xMin, xMax, yMin, yMax) * Width;
-                double y = gp.GetYPosition(xMin, xMax, yMin, yMax) * Height;
+                double x = gp.GetXPosition(xMin, xMax, yMin, yMax) * (Width - 18); //minus 18 for the size of the axis title rows & column
+                double y = gp.GetYPosition(xMin, xMax, yMin, yMax) * (Height -18);
                 points[i++] = new Point(x, y);
             }
 
@@ -116,9 +116,9 @@ namespace FinanceTracker.WPF
             }
 
             //set Xaxis
-            double xAxisHeight = gpList[0].GetXAxisPosition(xMin, xMax, yMin, yMax)*Height;
+            double xAxisHeight = gpList[0].GetXAxisPosition(xMin, xMax, yMin, yMax)* (Height - 18);
             Point xstart = new Point(0, xAxisHeight);
-            Point xEnd = new Point(Width, xAxisHeight);
+            Point xEnd = new Point(Width-18, xAxisHeight);
             List<LineSegment> seg = new List<LineSegment>();
             seg.Add(new LineSegment(xEnd, true));
             PathFigure xFig = new PathFigure(xstart, seg, false);
@@ -196,6 +196,40 @@ namespace FinanceTracker.WPF
 
         }
 
+        #endregion
+
+        #region XAxisTitle
+        [Bindable(true)]
+        [Category("Appearance")]
+        public string XAxisTitle
+        {
+            get { return (string)GetValue(XAxisTitleProperty); }
+            set { SetValue(XAxisTitleProperty, value); }
+        }
+
+        public static readonly DependencyProperty XAxisTitleProperty
+            = DependencyProperty.Register("XAxisTitle", typeof(string), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnXAxisTitlePropertyChanged)));
+        private static void OnXAxisTitlePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+        #endregion
+
+        #region YAxisTitle
+        [Bindable(true)]
+        [Category("Appearance")]
+        public string YAxisTitle
+        {
+            get { return (string)GetValue(YAxisTitleProperty); }
+            set { SetValue(YAxisTitleProperty, value); }
+        }
+
+        public static readonly DependencyProperty YAxisTitleProperty
+            = DependencyProperty.Register("YAxisTitle", typeof(string), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnYAxisTitlePropertyChanged)));
+        private static void OnYAxisTitlePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
         #endregion
         static GraphControl()
         {

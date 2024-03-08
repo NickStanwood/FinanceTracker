@@ -54,6 +54,7 @@
                    Text="{Binding Path=Account.AveragePurchaseCost, StringFormat={}Avg $ {0:#,#.00} per transaction}" 
                    FontSize="20" Margin="5"/>
                         <local:GraphControl Width="600" Height="200" Background="#F8F8F8F8" BorderBrush="Black" BorderThickness="1"
+                                            XAxisTitle="Time" YAxisTitle="Dollars (CAD)"
                                              ItemsSource="{Binding Account.BalanceOverTime}" MinY="{Binding Account.MinY}" MaxY="{Binding Account.MaxY}"/>
                     </StackPanel>
                 </Grid>

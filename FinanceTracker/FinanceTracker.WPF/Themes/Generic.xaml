@@ -9,10 +9,27 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:GraphControl}">
                     <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                        <Canvas Background="{TemplateBinding Background}">
-                            <Path Data="{TemplateBinding GraphData}" Stroke="Green" StrokeThickness="1.5"/>
-                            <Path Data="{TemplateBinding XAxis}" Stroke="Black" StrokeThickness="0.5"/>
-                        </Canvas>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="18"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="18"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="0" Text="{TemplateBinding YAxisTitle}" VerticalAlignment="Center">
+                                <TextBlock.LayoutTransform>
+                                    <RotateTransform Angle="-90"/>
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{TemplateBinding XAxisTitle}" HorizontalAlignment="Center"/>
+
+                            <Canvas Grid.Column="1" Background="{TemplateBinding Background}">
+                                <Path Data="{TemplateBinding GraphData}" Stroke="Green" StrokeThickness="1.5"/>
+                                <Path Data="{TemplateBinding XAxis}" Stroke="Black" StrokeThickness="0.5"/>
+                            </Canvas>
+                        </Grid>
                     </Border>                   
                 </ControlTemplate>
             </Setter.Value>
