@@ -59,71 +59,11 @@ namespace FinanceTracker.WPF
         void newValueINotifyCollectionChanged_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             List<IGraphPoint> gpList = ItemsSource.Cast<IGraphPoint>().ToList();
-            gpList.Sort();
-            IComparable xMin = gpList[0].GetXValue();
-            IComparable xMax = gpList[gpList.Count - 1].GetXValue();
-
-            IComparable yMin = gpList[0].GetYValue();
-            if (ReadLocalValue(MinYProperty) != DependencyProperty.UnsetValue)
-                yMin = MinY.GetYValue();
+            UpdateGraphBounds(gpList);
+            UpdateGridLines(gpList);
+            UpdateGraphPlot(gpList);
             
-            IComparable yMax = gpList[gpList.Count - 1].GetYValue();
-            if (ReadLocalValue(MaxYProperty) != DependencyProperty.UnsetValue)
-                yMax = MaxY.GetYValue();
 
-            //get max and min values
-            foreach (IGraphPoint gp in gpList)
-            {
-                IComparable x = gp.GetXValue();
-                if (x.CompareTo(xMin) < 0)
-                    xMin = x;
-                if (x.CompareTo(xMax) > 0)
-                    xMax = x;
-
-                IComparable y = gp.GetYValue();
-                if (y.CompareTo(yMin) < 0)
-                    yMin = y;
-                if (y.CompareTo(yMax) > 0)
-                    yMax = y;
-            }
-
-
-            //add points to graph
-            Point[] points = new Point[gpList.Count];
-            int i = 0;
-            foreach (IGraphPoint gp in gpList)
-            {
-                double x = gp.GetXPosition(xMin, xMax, yMin, yMax) * (Width - 18); //minus 18 for the size of the axis title rows & column
-                double y = gp.GetYPosition(xMin, xMax, yMin, yMax) * (Height -18);
-                points[i++] = new Point(x, y);
-            }
-
-            if (points.Length > 0)
-            {
-                Point start = points[0];
-                List<LineSegment> segments = new List<LineSegment>();
-                for (i = 1; i < points.Length; i++)
-                {
-                    segments.Add(new LineSegment(points[i], true));
-                }
-                PathFigure figure = new PathFigure(start, segments, false); //true if closed
-                GraphData = new PathGeometry();
-                GraphData.Figures.Add(figure);
-            }
-            else
-            {
-                GraphData = null;
-            }
-
-            //set Xaxis
-            double xAxisHeight = gpList[0].GetXAxisPosition(xMin, xMax, yMin, yMax)* (Height - 18);
-            Point xstart = new Point(0, xAxisHeight);
-            Point xEnd = new Point(Width-18, xAxisHeight);
-            List<LineSegment> seg = new List<LineSegment>();
-            seg.Add(new LineSegment(xEnd, true));
-            PathFigure xFig = new PathFigure(xstart, seg, false);
-            XAxis = new PathGeometry();
-            XAxis.Figures.Add(xFig);
         }
         #endregion
 
@@ -231,9 +171,92 @@ namespace FinanceTracker.WPF
 
         }
         #endregion
+
+
+        private double GraphWidth { get { return Width - 18;  } } //minus 18 for the size of the axis title rows & column
+        private double GraphHeight{ get { return Height - 18; } }
+
+        private IComparable _xMin;
+        private IComparable _xMax;
+        private IComparable _yMin;
+        private IComparable _yMax;
         static GraphControl()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(GraphControl), new FrameworkPropertyMetadata(typeof(GraphControl)));
+        }
+
+        private void UpdateGraphBounds(List<IGraphPoint> gpList)
+        {
+            gpList.Sort();
+            _xMin = gpList[0].GetXValue();
+            _xMax = gpList[gpList.Count - 1].GetXValue();
+
+            _yMin = gpList[0].GetYValue();
+            if (ReadLocalValue(MinYProperty) != DependencyProperty.UnsetValue)
+                _yMin = MinY.GetYValue();
+
+            _yMax = gpList[gpList.Count - 1].GetYValue();
+            if (ReadLocalValue(MaxYProperty) != DependencyProperty.UnsetValue)
+                _yMax = MaxY.GetYValue();
+
+            //get max and min values
+            foreach (IGraphPoint gp in gpList)
+            {
+                IComparable x = gp.GetXValue();
+                if (x.CompareTo(_xMin) < 0)
+                    _xMin = x;
+                if (x.CompareTo(_xMax) > 0)
+                    _xMax = x;
+
+                IComparable y = gp.GetYValue();
+                if (y.CompareTo(_yMin) < 0)
+                    _yMin = y;
+                if (y.CompareTo(_yMax) > 0)
+                    _yMax = y;
+            }
+        }
+
+        private void UpdateGridLines(List<IGraphPoint> gpList)
+        {
+            //set Xaxis
+            double xAxisHeight = gpList[0].GetXAxisPosition(_yMin, _yMax) * GraphHeight;
+            Point xstart = new Point(0, xAxisHeight);
+            Point xEnd = new Point(GraphWidth, xAxisHeight);
+            List<LineSegment> seg = new List<LineSegment>();
+            seg.Add(new LineSegment(xEnd, true));
+            PathFigure xFig = new PathFigure(xstart, seg, false);
+            XAxis = new PathGeometry();
+            XAxis.Figures.Add(xFig);
+        }
+
+        private void UpdateGraphPlot(List<IGraphPoint> gpList)
+        {
+            //add points to graph
+            Point[] points = new Point[gpList.Count];
+            int i = 0;
+            foreach (IGraphPoint gp in gpList)
+            {
+                double x = gp.GetXPosition(_xMin, _xMax) * GraphWidth;
+                double y = gp.GetYPosition(_yMin, _yMax) * GraphHeight;
+                points[i++] = new Point(x, y);
+            }
+
+            if (points.Length > 0)
+            {
+                Point start = points[0];
+                List<LineSegment> segments = new List<LineSegment>();
+                for (i = 1; i < points.Length; i++)
+                {
+                    segments.Add(new LineSegment(points[i], true));
+                }
+                PathFigure figure = new PathFigure(start, segments, false); //true if closed
+                GraphData = new PathGeometry();
+                GraphData.Figures.Add(figure);
+            }
+            else
+            {
+                GraphData = null;
+            }
         }
     }
 }
