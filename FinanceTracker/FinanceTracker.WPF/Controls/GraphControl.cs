@@ -314,6 +314,9 @@ namespace FinanceTracker.WPF
                 XGridLines = new PathGeometry();
                 if (GridHeight.IsAbsolute && GridHeight.Value > 0.0)
                 {
+                    if (double.IsNaN(xAxisHeight))
+                        xAxisHeight = GraphHeight;
+
                     double lineHeight = xAxisHeight + GridHeight.Value;
                     while (lineHeight < GraphHeight)
                     {
@@ -340,18 +343,50 @@ namespace FinanceTracker.WPF
                 }
             }
             
-
-
             //set y axis
             double yAxisWidth = gpList[0].GetYAxisPosition(_xMin, _xMax) * GraphWidth;
             Point yStart = new Point(0, yAxisWidth);
             Point yEnd = new Point(GraphHeight, yAxisWidth);
             List<LineSegment> ySeg = new List<LineSegment>();
-            ySeg.Add(new LineSegment(xEnd, true));
+            ySeg.Add(new LineSegment(yEnd, true));
             PathFigure yFig = new PathFigure(yStart, ySeg, false);
             YAxis = new PathGeometry();
             YAxis.Figures.Add(yFig);
 
+            //set Y axis grid lines
+            if (ReadLocalValue(GridWidthProperty) != DependencyProperty.UnsetValue)
+            {
+                YGridLines = new PathGeometry();
+                if (GridWidth.IsAbsolute && GridWidth.Value > 0.0)
+                {
+                    if (double.IsNaN(yAxisWidth))
+                        yAxisWidth = 0;
+
+                    double lineWidth = yAxisWidth + GridWidth.Value;
+                    while (lineWidth < GraphWidth)
+                    {
+                        Point p0 = new Point(lineWidth, 0);
+                        Point p1 = new Point(lineWidth, GraphHeight);
+                        List<LineSegment> seg = new List<LineSegment>();
+                        seg.Add(new LineSegment(p1, true));
+                        PathFigure fig = new PathFigure(p0, seg, false);
+                        YGridLines.Figures.Add(fig);
+                        lineWidth += GridWidth.Value;
+                    }
+
+                    lineWidth = yAxisWidth - GridWidth.Value;
+                    while (lineWidth > 0)
+                    {
+                        Point p0 = new Point(lineWidth, 0);
+                        Point p1 = new Point(lineWidth, GraphHeight);
+                        List<LineSegment> seg = new List<LineSegment>();
+                        seg.Add(new LineSegment(p1, true));
+                        PathFigure fig = new PathFigure(p0, seg, false);
+                        YGridLines.Figures.Add(fig);
+                        lineWidth -= GridWidth.Value;
+                    }
+                }
+            }
         }
 
         private void UpdateGraphPlot(List<IGraphPoint> gpList)

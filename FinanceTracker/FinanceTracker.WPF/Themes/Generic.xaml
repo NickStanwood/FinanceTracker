@@ -29,6 +29,7 @@
                                 <Path Data="{TemplateBinding GraphData}" Stroke="Green" StrokeThickness="1.5"/>
                                 <Path Data="{TemplateBinding XAxis}" Stroke="Black" StrokeThickness=".5"/>
                                 <Path Data="{TemplateBinding XGridLines}" Stroke="#323232" StrokeThickness="0.25"/>
+                                <Path Data="{TemplateBinding YGridLines}" Stroke="#323232" StrokeThickness="0.25"/>
                             </Canvas>
                         </Grid>
                     </Border>                   
