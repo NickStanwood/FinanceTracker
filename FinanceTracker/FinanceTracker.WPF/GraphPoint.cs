@@ -100,7 +100,7 @@ namespace FinanceTracker.WPF
 
         double IGraphPoint.GetYAxisPosition(object minX, object maxX)
         {
-            return GetXAxisPosition((XType)minX, (XType)maxX);
+            return GetYAxisPosition((XType)minX, (XType)maxX);
         }
 
         IComparable IGraphPoint.GetXValue()

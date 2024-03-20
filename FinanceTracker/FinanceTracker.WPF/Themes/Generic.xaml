@@ -25,9 +25,10 @@
                             </TextBlock>
                             <TextBlock Grid.Column="1" Grid.Row="1" Text="{TemplateBinding XAxisTitle}" HorizontalAlignment="Center"/>
 
-                            <Canvas Grid.Column="1" Background="{TemplateBinding Background}">
+                            <Canvas Grid.Column="1" Background="{TemplateBinding Background}" Margin="1">
                                 <Path Data="{TemplateBinding GraphData}" Stroke="Green" StrokeThickness="1.5"/>
-                                <Path Data="{TemplateBinding XAxis}" Stroke="Black" StrokeThickness="0.5"/>
+                                <Path Data="{TemplateBinding XAxis}" Stroke="Black" StrokeThickness=".5"/>
+                                <Path Data="{TemplateBinding XGridLines}" Stroke="#323232" StrokeThickness="0.25"/>
                             </Canvas>
                         </Grid>
                     </Border>                   

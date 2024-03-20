@@ -86,8 +86,7 @@ namespace FinanceTracker.WPF
         #endregion
 
         #region XAxis
-        [Bindable(true)]
-        [Category("Appearance")]
+        [Bindable(false)]
         public PathGeometry XAxis
         {
             get { return (PathGeometry)GetValue(XAxisProperty); }
@@ -97,6 +96,54 @@ namespace FinanceTracker.WPF
         public static readonly DependencyProperty XAxisProperty
             = DependencyProperty.Register("XAxis", typeof(PathGeometry), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnXAxisPropertyChanged)));
         private static void OnXAxisPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+        #endregion
+
+        #region YAxis
+        [Bindable(false)]
+        public PathGeometry YAxis
+        {
+            get { return (PathGeometry)GetValue(YAxisProperty); }
+            set { SetValue(YAxisProperty, value); }
+        }
+
+        public static readonly DependencyProperty YAxisProperty
+            = DependencyProperty.Register("YAxis", typeof(PathGeometry), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnYAxisPropertyChanged)));
+        private static void OnYAxisPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+        #endregion
+
+        #region XGridLines
+        [Bindable(false)]
+        public PathGeometry XGridLines
+        {
+            get { return (PathGeometry)GetValue(XGridLinesProperty); }
+            set { SetValue(XGridLinesProperty, value); }
+        }
+
+        public static readonly DependencyProperty XGridLinesProperty
+            = DependencyProperty.Register("XGridLines", typeof(PathGeometry), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnXGridLinesPropertyChanged)));
+        private static void OnXGridLinesPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+        #endregion
+
+        #region YGridLines
+        [Bindable(false)]
+        public PathGeometry YGridLines
+        {
+            get { return (PathGeometry)GetValue(YGridLinesProperty); }
+            set { SetValue(YGridLinesProperty, value); }
+        }
+
+        public static readonly DependencyProperty YGridLinesProperty
+            = DependencyProperty.Register("YGridLines", typeof(PathGeometry), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnYGridLinesPropertyChanged)));
+        private static void OnYGridLinesPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
 
         }
@@ -172,9 +219,42 @@ namespace FinanceTracker.WPF
         }
         #endregion
 
+        #region GridHeight
+        [Bindable(true)]
+        [Category("Appearance")]
+        public GridLength GridHeight
+        {
+            get { return (GridLength)GetValue(GridHeightProperty); }
+            set { SetValue(GridHeightProperty, value); }
+        }
 
-        private double GraphWidth { get { return Width - 18;  } } //minus 18 for the size of the axis title rows & column
-        private double GraphHeight{ get { return Height - 18; } }
+        public static readonly DependencyProperty GridHeightProperty
+            = DependencyProperty.Register("GridHeight", typeof(GridLength), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnGridHeightPropertyChanged)));
+        private static void OnGridHeightPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+        #endregion
+
+        #region GridWidth
+        [Bindable(true)]
+        [Category("Appearance")]
+        public GridLength GridWidth
+        {
+            get { return (GridLength)GetValue(GridWidthProperty); }
+            set { SetValue(GridWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty GridWidthProperty
+            = DependencyProperty.Register("GridWidth", typeof(GridLength), typeof(GraphControl), new PropertyMetadata(new PropertyChangedCallback(OnGridWidthPropertyChanged)));
+        private static void OnGridWidthPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+        #endregion
+
+        private double GraphWidth { get { return Width - 20;  } } //minus 18 for the size of the axis title rows & column. minus 2 for canvas margin
+        private double GraphHeight{ get { return Height - 20; } }
 
         private IComparable _xMin;
         private IComparable _xMax;
@@ -219,14 +299,59 @@ namespace FinanceTracker.WPF
         private void UpdateGridLines(List<IGraphPoint> gpList)
         {
             //set Xaxis
-            double xAxisHeight = gpList[0].GetXAxisPosition(_yMin, _yMax) * GraphHeight;
-            Point xstart = new Point(0, xAxisHeight);
+            double xAxisHeight = (1 - gpList[0].GetXAxisPosition(_yMin, _yMax)) * GraphHeight;
+            Point xStart = new Point(0, xAxisHeight);
             Point xEnd = new Point(GraphWidth, xAxisHeight);
-            List<LineSegment> seg = new List<LineSegment>();
-            seg.Add(new LineSegment(xEnd, true));
-            PathFigure xFig = new PathFigure(xstart, seg, false);
+            List<LineSegment> xSeg = new List<LineSegment>();
+            xSeg.Add(new LineSegment(xEnd, true));
+            PathFigure xFig = new PathFigure(xStart, xSeg, false);
             XAxis = new PathGeometry();
             XAxis.Figures.Add(xFig);
+
+            //set Xaxis grid lines
+            if(ReadLocalValue(GridHeightProperty) != DependencyProperty.UnsetValue)
+            {
+                XGridLines = new PathGeometry();
+                if (GridHeight.IsAbsolute && GridHeight.Value > 0.0)
+                {
+                    double lineHeight = xAxisHeight + GridHeight.Value;
+                    while (lineHeight < GraphHeight)
+                    {
+                        Point p0 = new Point(0, lineHeight);
+                        Point p1 = new Point(GraphWidth, lineHeight);
+                        List<LineSegment> seg = new List<LineSegment>();
+                        seg.Add(new LineSegment(p1, true));
+                        PathFigure fig = new PathFigure(p0, seg, false);
+                        XGridLines.Figures.Add(fig);
+                        lineHeight += GridHeight.Value;
+                    }
+
+                    lineHeight = xAxisHeight - GridHeight.Value;
+                    while (lineHeight > 0)
+                    {
+                        Point p0 = new Point(0, lineHeight);
+                        Point p1 = new Point(GraphWidth, lineHeight);
+                        List<LineSegment> seg = new List<LineSegment>();
+                        seg.Add(new LineSegment(p1, true));
+                        PathFigure fig = new PathFigure(p0, seg, false);
+                        XGridLines.Figures.Add(fig);
+                        lineHeight -= GridHeight.Value;
+                    }
+                }
+            }
+            
+
+
+            //set y axis
+            double yAxisWidth = gpList[0].GetYAxisPosition(_xMin, _xMax) * GraphWidth;
+            Point yStart = new Point(0, yAxisWidth);
+            Point yEnd = new Point(GraphHeight, yAxisWidth);
+            List<LineSegment> ySeg = new List<LineSegment>();
+            ySeg.Add(new LineSegment(xEnd, true));
+            PathFigure yFig = new PathFigure(yStart, ySeg, false);
+            YAxis = new PathGeometry();
+            YAxis.Figures.Add(yFig);
+
         }
 
         private void UpdateGraphPlot(List<IGraphPoint> gpList)
@@ -237,7 +362,7 @@ namespace FinanceTracker.WPF
             foreach (IGraphPoint gp in gpList)
             {
                 double x = gp.GetXPosition(_xMin, _xMax) * GraphWidth;
-                double y = gp.GetYPosition(_yMin, _yMax) * GraphHeight;
+                double y = (1 - gp.GetYPosition(_yMin, _yMax)) * GraphHeight;
                 points[i++] = new Point(x, y);
             }
 
